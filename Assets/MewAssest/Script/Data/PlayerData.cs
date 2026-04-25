@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerData : BaseData
 {
     [Header("Player Settings")]
-    [SerializeField] private float maxHP;
+    [SerializeField] private int maxHP;
     [SerializeField] private int damage;
     [SerializeField] private float moveSpeed;
     [SerializeField] private int maxDashCount;
@@ -14,7 +14,7 @@ public class PlayerData : BaseData
     [SerializeField] private float attackCooldownTime;
     [SerializeField] private float dashCooldownTime;
 
-    public float MaxHP => maxHP;
+    public int MaxHP => maxHP;
     public int Damage => damage;
     public float MoveSpeed => moveSpeed;
     public int MaxDashCount => maxDashCount;

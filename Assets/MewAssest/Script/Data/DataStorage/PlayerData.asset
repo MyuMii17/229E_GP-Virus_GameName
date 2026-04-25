@@ -22,10 +22,10 @@ MonoBehaviour:
   gravityScale: 2
   isCanDestroy: 1
   maxHP: 100
-  damage: 10
+  damage: 1
   moveSpeed: 5
   maxDashCount: 1
   dashAcceleration: 12
   jumpAcceleration: 6
   attackCooldownTime: 0.5
-  dashCooldownTime: 1
+  dashCooldownTime: 0.2

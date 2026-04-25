@@ -1,5 +1,7 @@
 using System.Collections;
+using JetBrains.Annotations;
 using NUnit.Framework;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering.Universal;
@@ -7,35 +9,65 @@ using UnityEngine.Rendering.Universal;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private DataHolder dataHolder;
+    [SerializeField]private Transform attackAreaPos;
+    [SerializeField]private GameObject attackArea;
+    [SerializeField]private GameObject slashVFX;
+    [SerializeField]private Transform slashPos;
+    private SpriteRenderer playerSprite;
     private Rigidbody2D rb;
     private InputAction dashAction;
     private InputAction attackAction;
     private InputAction moveAction;
     private float playerMoveSpeed;
-    private float playerJumpForce;
-    private float playerDashForce;
     private float playerMass;
-    private float playerGravityScale;
     private float playerDashCount;
     private float playerMaxDashCount;
     private float playerDashAcceleration;
     private float playerJumpAcceleration;
     private float playerDashCooldown;
+    private float playerJumpForce;
+    private float playerDashForce;
+    private float playerGravityScale;
     private float playerLinearDamp;
     private float playerAngularDamp;
     private float horizontalInput;
     private float verticalInput;
+
+    [Header("Player Setting")]
+    public int playerDamage;
+    public float playerAttackCooldown;
     public bool isDashing;
     public bool isDashCooldown;
     public bool isMove;
     public bool isJumpPressed;
     public bool isGrounded;
-    void Start()
+    public bool isAttacking;
+
+    private static PlayerController StaticInstance = null;
+    public static PlayerController GetStatic()
     {
+        return StaticInstance;
+    }
+
+    void Awake()
+    {
+        if(StaticInstance != null)
+        {
+            Destroy(this.gameObject);
+            return;
+        }
+
+        DontDestroyOnLoad(gameObject);
+
+        StaticInstance = this;
+
         isDashing = false;
 
         dataHolder = GetComponent<DataHolder>();
         rb = GetComponent<Rigidbody2D>();
+        attackAreaPos = transform.GetChild(0).transform;
+        attackArea = transform.GetChild(0).gameObject.transform.GetChild(0).gameObject;
+        playerSprite = transform.GetChild(1).GetComponent<SpriteRenderer>();
         moveAction = InputSystem.actions.FindAction("Move");
         attackAction = InputSystem.actions.FindAction("Attack");
         dashAction = InputSystem.actions.FindAction("Dash");
@@ -51,6 +83,8 @@ public class PlayerController : MonoBehaviour
             playerGravityScale = dataHolder.baseData.GravityScale;
             playerMaxDashCount = playerData.MaxDashCount;
             playerDashCooldown = playerData.DashCooldownTime;
+            playerAttackCooldown = playerData.AttackCooldownTime;
+            playerDamage = playerData.Damage;
 
             rb.mass = playerMass;
             rb.linearDamping = playerLinearDamp;
@@ -66,12 +100,22 @@ public class PlayerController : MonoBehaviour
         {
             Debug.LogError("BaseData is not of type PlayerData.");
         }
-        
+
     }
     void Update()
     {
         horizontalInput = moveAction.ReadValue<Vector2>().x;
         verticalInput = moveAction.ReadValue<Vector2>().y;
+        if (horizontalInput < 0 && isAttacking == false && isDashing == false) 
+        { 
+            playerSprite.flipX = true;
+            attackAreaPos.transform.rotation = Quaternion.Euler(0, 0, 180);
+        }
+        else if (horizontalInput > 0  && isAttacking == false && isDashing == false) 
+        {
+            playerSprite.flipX = false;
+            attackAreaPos.transform.rotation = Quaternion.Euler(0, 0, 0);
+        }
 
         if(verticalInput > 0 && isDashing == false && isGrounded)
         {
@@ -83,6 +127,12 @@ public class PlayerController : MonoBehaviour
             
             StartCoroutine(Dash(horizontalInput));
         }   
+        if(attackAction.WasPressedThisFrame() && isAttacking != true)
+        {
+            var slashVfxSpawn = Instantiate(slashVFX,slashPos.position,Quaternion.identity);
+            Destroy(slashVfxSpawn, 0.2f);
+            StartCoroutine(Attack());
+        }
     }
 
     void FixedUpdate()
@@ -100,7 +150,6 @@ public class PlayerController : MonoBehaviour
         }
 
     }
-
     IEnumerator Dash(float dir)
     {
         var direction = dir; 
@@ -119,8 +168,15 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(playerDashCooldown);
         isDashCooldown = false;
     }
-        
-
+    IEnumerator Attack()
+    {
+        isAttacking = true;
+        attackArea.SetActive(true);
+        AttackArea.GetStatic().OnAttack();
+        yield return new WaitForSeconds(playerAttackCooldown);
+        attackArea.SetActive(false);
+        isAttacking = false;
+    }
     void OnCollisionStay2D(Collision2D collision)
     {
         playerDashCount = playerMaxDashCount;
