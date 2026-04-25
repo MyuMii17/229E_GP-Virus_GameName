@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 729e261bcfbfb1e4aa0ae7f02f9bb670, type: 3}
+  m_Name: PlayerData
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerData
+  icon: {fileID: 0}
+  prefeb: {fileID: 0}
+  objectName: MainCharacter
+  description: Test
+  mass: 1
+  linearDamp: 1
+  angularDamp: 0.05
+  gravityScale: 2
+  isCanDestroy: 1
+  maxHP: 100
+  damage: 10
+  moveSpeed: 5
+  maxDashCount: 1
+  dashAcceleration: 12
+  jumpAcceleration: 6
+  attackCooldownTime: 0.5
+  dashCooldownTime: 1
