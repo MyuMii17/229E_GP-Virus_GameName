@@ -34,7 +34,7 @@ public class PlayerController : MonoBehaviour
     private float verticalInput;
 
     [Header("Player Setting")]
-    public int playerDamage;
+    public float playerDamage;
     public float playerAttackCooldown;
     public bool isDashing;
     public bool isDashCooldown;

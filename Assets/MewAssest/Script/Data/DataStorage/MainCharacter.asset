@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 729e261bcfbfb1e4aa0ae7f02f9bb670, type: 3}
-  m_Name: PlayerData
+  m_Name: MainCharacter
   m_EditorClassIdentifier: Assembly-CSharp::PlayerData
   icon: {fileID: 0}
   prefeb: {fileID: 0}
@@ -21,10 +21,11 @@ MonoBehaviour:
   angularDamp: 0.05
   gravityScale: 2
   isCanDestroy: 1
-  maxHP: 100
+  maxHP: 5
   damage: 1
   moveSpeed: 5
   maxDashCount: 1
+  pushAcceleration: 0
   dashAcceleration: 12
   jumpAcceleration: 6
   attackCooldownTime: 0.5

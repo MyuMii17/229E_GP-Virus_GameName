@@ -1,5 +1,6 @@
 using UnityEditor;
-    
+using UnityEngine;
+
 [CustomEditor(typeof(PlayerData))]
 public class PlayerDataEditor : Editor
 {
@@ -7,6 +8,7 @@ public class PlayerDataEditor : Editor
     SerializedProperty damage;
     SerializedProperty moveSpeed;
     SerializedProperty maxDashCount;
+    SerializedProperty pushAcceleration;
     SerializedProperty dashAcceleration;
     SerializedProperty jumpAcceleration;
     SerializedProperty attackCooldownTime;
@@ -18,6 +20,7 @@ public class PlayerDataEditor : Editor
         damage = serializedObject.FindProperty("damage");
         moveSpeed = serializedObject.FindProperty("moveSpeed");
         maxDashCount = serializedObject.FindProperty("maxDashCount");
+        pushAcceleration = serializedObject.FindProperty("pushAcceleration");
         dashAcceleration = serializedObject.FindProperty("dashAcceleration");
         jumpAcceleration = serializedObject.FindProperty("jumpAcceleration");
         attackCooldownTime = serializedObject.FindProperty("attackCooldownTime");
@@ -28,17 +31,30 @@ public class PlayerDataEditor : Editor
     {
         serializedObject.Update();
         
+        PlayerData data = (PlayerData)target;
+
         DrawPropertiesExcluding(serializedObject, 
-            "maxHP", "damage", "moveSpeed", "maxDashCount", "dashAcceleration", "jumpAcceleration", "attackCooldownTime", "dashCooldownTime");
+            "maxHP", "damage", "moveSpeed", "maxDashCount", "pushAcceleration", "dashAcceleration", "jumpAcceleration", "attackCooldownTime", "dashCooldownTime");
 
         EditorGUILayout.PropertyField(maxHP);
         EditorGUILayout.PropertyField(damage);
         EditorGUILayout.PropertyField(moveSpeed);
         EditorGUILayout.PropertyField(maxDashCount);
+        EditorGUILayout.PropertyField(pushAcceleration);
         EditorGUILayout.PropertyField(dashAcceleration);
         EditorGUILayout.PropertyField(jumpAcceleration);
         EditorGUILayout.PropertyField(attackCooldownTime);
         EditorGUILayout.PropertyField(dashCooldownTime);
+        
+        if(GUILayout.Button("Rename Assest"))
+        {
+            AssetDatabase.RenameAsset(
+                AssetDatabase.GetAssetPath(data),
+                data.ObjectName
+            );
+
+            AssetDatabase.SaveAssets();
+        }
 
         serializedObject.ApplyModifiedProperties();
     }        

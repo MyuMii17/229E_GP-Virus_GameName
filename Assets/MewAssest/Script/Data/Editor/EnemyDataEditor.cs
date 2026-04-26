@@ -5,39 +5,51 @@ using UnityEngine;
 public class EnemyDataEditor : Editor
 {
     SerializedProperty enemyType;
-    SerializedProperty enemyHPs;
-    SerializedProperty enemyHPm;
-    SerializedProperty enemyHPb;
+    SerializedProperty enemyHP;
+    SerializedProperty damage;
+    SerializedProperty moveSpeed;
+    SerializedProperty pushAcceleration;
+    SerializedProperty attackCooldownTime;
+    SerializedProperty arrowPrefeb;
 
     void OnEnable()
     {
         enemyType = serializedObject.FindProperty("enemyType");
-        enemyHPs = serializedObject.FindProperty("enemyHPs");
-        enemyHPm = serializedObject.FindProperty("enemyHPm");
-        enemyHPb = serializedObject.FindProperty("enemyHPb");
+        enemyHP= serializedObject.FindProperty("enemyHPs");
+        damage = serializedObject.FindProperty("damage");
+        moveSpeed = serializedObject.FindProperty("moveSpeed");
+        pushAcceleration = serializedObject.FindProperty("pushAcceleration");
+        attackCooldownTime = serializedObject.FindProperty("attackCooldownTime");
+        arrowPrefeb = serializedObject.FindProperty("arrowPrefeb");
     }
 
     public override void OnInspectorGUI()
     {
         serializedObject.Update();
         
-        DrawPropertiesExcluding(serializedObject, 
-            "enemyType", "enemyHPs", "enemyHPm", "enemyHPb");
+        EnemyData data = (EnemyData)target;
         
-        EditorGUILayout.PropertyField(enemyType);
+        DrawPropertiesExcluding(serializedObject, "arrowPrefeb");
+
         var type = (EnemyType)enemyType.enumValueIndex;
 
         switch (type)
         {
-            case EnemyType.Small:
-                EditorGUILayout.PropertyField(enemyHPs);
+            case EnemyType.Swordman:
                 break;
-            case EnemyType.Medium:
-                EditorGUILayout.PropertyField(enemyHPb);
+            case EnemyType.Archer:
+                EditorGUILayout.PropertyField(arrowPrefeb);
                 break;
-            case EnemyType.Big:
-                EditorGUILayout.PropertyField(enemyHPb);
-                break;
+        }
+
+        if (GUILayout.Button("Rename Asset"))
+        {
+            AssetDatabase.RenameAsset(
+                AssetDatabase.GetAssetPath(data),
+                data.ObjectName
+            );
+
+            AssetDatabase.SaveAssets();
         }
 
         serializedObject.ApplyModifiedProperties();

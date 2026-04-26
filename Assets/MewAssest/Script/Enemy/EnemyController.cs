@@ -3,18 +3,49 @@ using UnityEngine;
 public class EnemyController : MonoBehaviour
 {
     [SerializeField]private DataHolder dataHolder;
+    private Rigidbody2D rb;
     private float enemyMass;
+    private float enemyLinerDamp;
+    private float enemyAugularDamp;
+    private float enemyGravityScale;
+    private float enemyDamage;
+    private float enemyMoveSpeed;
+    private float enemyPushAcceleration;
+    private float enemyAttackCooldownTime;
+    private GameObject enemyArrowPrefeb;
+
+    [Header("Enemy Setting")]
     public float enemyHP;
-    void Start()
+    public bool isCanDestroy;
+    void Awake()
     {
         dataHolder = GetComponent<DataHolder>();
+        rb = GetComponent<Rigidbody2D>();
         if(dataHolder.baseData is EnemyData enemyData)
         {
-            enemyHP = enemyData.EnemyHPs;
+            enemyHP = enemyData.EnemyHP;
+            enemyMass = dataHolder.baseData.Mass;
+            enemyLinerDamp = dataHolder.baseData.LinearDamp;
+            enemyAugularDamp = dataHolder.baseData.AngularDamp;
+            enemyGravityScale = dataHolder.baseData.GravityScale;
+            isCanDestroy = dataHolder.baseData.IsCanDestroy;
+            enemyDamage = enemyData.Damage;
+            enemyMoveSpeed = enemyData.MoveSpeed;
+            enemyPushAcceleration = enemyData.PushAcceleration;
+            enemyAttackCooldownTime = enemyData.AttackCooldownTime;
+            if(enemyData.EnemyType == "Archer")
+            {
+                enemyArrowPrefeb = enemyData.ArrowPrefeb;
+            }
+
+            rb.mass = enemyMass;
+            rb.linearDamping = enemyLinerDamp;
+            rb.angularDamping = enemyAugularDamp;
+            rb.gravityScale = enemyGravityScale;
         }
     }
 
-    public void OnHit(int damage)
+    public void OnHit(float damage)
     {
         enemyHP -= damage;
         if(enemyHP <= 0)
