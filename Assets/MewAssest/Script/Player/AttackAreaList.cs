@@ -7,7 +7,7 @@ using UnityEngine.InputSystem;
 
 public class AttackAreaList : MonoBehaviour
 {
-    public List<EnemyController> enemiesInRange = new List<EnemyController>();
+    public HashSet<EnemyController> enemiesInRange = new HashSet<EnemyController>();
     private static AttackAreaList StaticInstance = null;
     public static AttackAreaList GetStatic()
     {
@@ -21,10 +21,7 @@ public class AttackAreaList : MonoBehaviour
     {
         if (collider.TryGetComponent(out EnemyController enemy))
         {
-            if(!enemiesInRange.Contains(enemy))
-            {
-                enemiesInRange.Add(enemy);
-            }
+            enemiesInRange.Add(enemy);
         }
     }
     void OnTriggerExit2D(Collider2D collider)

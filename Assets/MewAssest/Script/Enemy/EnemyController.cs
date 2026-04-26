@@ -3,12 +3,12 @@ using UnityEngine;
 public class EnemyController : MonoBehaviour
 {
     [SerializeField]private DataHolder dataHolder;
+    private PlayerController playerController;
     private Rigidbody2D rb;
     private float enemyMass;
     private float enemyLinerDamp;
     private float enemyAugularDamp;
     private float enemyGravityScale;
-    private float enemyDamage;
     private float enemyMoveSpeed;
     private float enemyPushAcceleration;
     private float enemyAttackCooldownTime;
@@ -16,9 +16,13 @@ public class EnemyController : MonoBehaviour
 
     [Header("Enemy Setting")]
     public float enemyHP;
+    public float enemyDamage;
+    public float enemyPushForce;
     public bool isCanDestroy;
+    public bool isHasHit;
     void Awake()
     {
+        isHasHit = false;
         dataHolder = GetComponent<DataHolder>();
         rb = GetComponent<Rigidbody2D>();
         if(dataHolder.baseData is EnemyData enemyData)
@@ -42,12 +46,24 @@ public class EnemyController : MonoBehaviour
             rb.linearDamping = enemyLinerDamp;
             rb.angularDamping = enemyAugularDamp;
             rb.gravityScale = enemyGravityScale;
+
+            enemyPushForce = rb.mass * enemyPushAcceleration;
         }
     }
 
-    public void OnHit(float damage)
+    void Start()
+    {
+        playerController = PlayerController.GetStatic();
+    }
+
+    public void OnHit(float damage, float pushForce)
     {
         enemyHP -= damage;
+        var dir = playerController.transform.position - transform.position ;
+        dir.Normalize();
+        rb.AddForce(-dir * pushForce, ForceMode2D.Impulse);
+        isHasHit = false;
+
         if(enemyHP <= 0)
         {
             Destroy(gameObject, 0.1f);
