@@ -18,12 +18,9 @@ public class AttackArea : MonoBehaviour
     }
     public void OnAttack()
     {
-        if (AttackAreaList.GetStatic().enemiesInRange != null)
+        foreach (var enemy in AttackAreaList.GetStatic().enemiesInRange)
         {
-            foreach (var enemy in AttackAreaList.GetStatic().enemiesInRange)
-            {
-                enemy.OnHit(PlayerController.GetStatic().playerDamage);
-            }
+            enemy.OnHit(PlayerController.GetStatic().playerDamage);
         }
     }
 }

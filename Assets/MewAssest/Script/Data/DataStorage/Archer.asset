@@ -16,15 +16,15 @@ MonoBehaviour:
   prefeb: {fileID: 0}
   objectName: Archer
   description: 
-  mass: 0
-  linearDamp: 0
-  angularDamp: 0
-  gravityScale: 0
-  isCanDestroy: 0
+  mass: 1
+  linearDamp: 1
+  angularDamp: 0.05
+  gravityScale: 2
+  isCanDestroy: 1
   enemyType: 1
-  enemyHP: 0
-  damage: 0
-  moveSpeed: 0
-  pushAcceleration: 0
-  attackCooldownTime: 0
+  enemyHP: 1
+  damage: 1
+  moveSpeed: 2
+  pushAcceleration: 2
+  attackCooldownTime: 2
   arrowPrefeb: {fileID: 0}

@@ -8,7 +8,6 @@ public class EnemyController : MonoBehaviour
     private float enemyLinerDamp;
     private float enemyAugularDamp;
     private float enemyGravityScale;
-    private float enemyDamage;
     private float enemyMoveSpeed;
     private float enemyPushAcceleration;
     private float enemyAttackCooldownTime;
@@ -16,6 +15,8 @@ public class EnemyController : MonoBehaviour
 
     [Header("Enemy Setting")]
     public float enemyHP;
+    public float enemyDamage;
+    public float enemyPushForce;
     public bool isCanDestroy;
     void Awake()
     {
@@ -42,6 +43,8 @@ public class EnemyController : MonoBehaviour
             rb.linearDamping = enemyLinerDamp;
             rb.angularDamping = enemyAugularDamp;
             rb.gravityScale = enemyGravityScale;
+
+            enemyPushForce = rb.mass * enemyPushAcceleration;
         }
     }
 
