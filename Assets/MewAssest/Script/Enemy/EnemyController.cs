@@ -59,9 +59,9 @@ public class EnemyController : MonoBehaviour
     public void OnHit(float damage, float pushForce)
     {
         enemyHP -= damage;
-        var dir = transform.position - playerController.transform.position;
+        var dir = playerController.transform.position - transform.position ;
         dir.Normalize();
-        rb.AddForce(dir * pushForce, ForceMode2D.Impulse);
+        rb.AddForce(-dir * pushForce, ForceMode2D.Impulse);
         isHasHit = false;
 
         if(enemyHP <= 0)
