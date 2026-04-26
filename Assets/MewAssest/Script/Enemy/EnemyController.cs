@@ -3,6 +3,7 @@ using UnityEngine;
 public class EnemyController : MonoBehaviour
 {
     [SerializeField]private DataHolder dataHolder;
+    private PlayerController playerController;
     private Rigidbody2D rb;
     private float enemyMass;
     private float enemyLinerDamp;
@@ -18,8 +19,10 @@ public class EnemyController : MonoBehaviour
     public float enemyDamage;
     public float enemyPushForce;
     public bool isCanDestroy;
+    public bool isHasHit;
     void Awake()
     {
+        isHasHit = false;
         dataHolder = GetComponent<DataHolder>();
         rb = GetComponent<Rigidbody2D>();
         if(dataHolder.baseData is EnemyData enemyData)
@@ -48,9 +51,19 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-    public void OnHit(float damage)
+    void Start()
+    {
+        playerController = PlayerController.GetStatic();
+    }
+
+    public void OnHit(float damage, float pushForce)
     {
         enemyHP -= damage;
+        var dir = transform.position - playerController.transform.position;
+        dir.Normalize();
+        rb.AddForce(dir * pushForce, ForceMode2D.Impulse);
+        isHasHit = false;
+
         if(enemyHP <= 0)
         {
             Destroy(gameObject, 0.1f);

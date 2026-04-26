@@ -261,7 +261,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &503813459
 Transform:
   m_ObjectHideFlags: 0
@@ -740,6 +740,7 @@ MonoBehaviour:
   enemyDamage: 0
   enemyPushForce: 0
   isCanDestroy: 0
+  isHasHit: 0
 --- !u!114 &676752986
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1058,12 +1059,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   dataHolder: {fileID: 0}
   attackAreaPos: {fileID: 0}
-  attackArea: {fileID: 0}
+  attackAreaHit: {fileID: 0}
   slashVFX: {fileID: 4375208080625873866, guid: b77a99ae265f7b64f846ac502891cba1, type: 3}
   slashPos: {fileID: 319489604}
   rb: {fileID: 0}
   playerHP: 0
   playerDamage: 0
+  playerPushForce: 0
   playerAttackCooldown: 0
   isDashing: 0
   isDashCooldown: 0
@@ -1292,8 +1294,8 @@ Transform:
   m_GameObject: {fileID: 1547687572}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.53, y: -2.57, z: 0}
-  m_LocalScale: {x: 9.31, y: 1, z: 1}
+  m_LocalPosition: {x: 0.0269, y: -2.57, z: 0}
+  m_LocalScale: {x: 17.614054, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}

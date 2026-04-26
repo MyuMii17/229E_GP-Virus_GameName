@@ -9,7 +9,7 @@ public class OnClash : MonoBehaviour
 
     void OnTriggerStay2D(Collider2D collider)
     {
-        if (collider.TryGetComponent(out PlayerController player))
+        if (collider.TryGetComponent(out PlayerController player) && player.isImmune != true)
         {
             playerInRange = player;
             var dir = transform.position -  player.transform.position;
@@ -26,11 +26,11 @@ public class OnClash : MonoBehaviour
     }
     void OnTriggerExit2D(Collider2D collider)
     {
-        if (collider.TryGetComponent(out PlayerController player))
+        if (collider.TryGetComponent(out PlayerController player) && player.isImmune != true)
         {
             playerInRange = null;
             playerHit = null;
-            if(player.isGameOverl == false)
+            if(player.isGameOverl == false && Time.timeScale != 0)
             {
                 StartCoroutine(player.HasHit());
             }

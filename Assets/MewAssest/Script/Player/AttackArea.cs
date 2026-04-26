@@ -7,6 +7,9 @@ using UnityEngine.InputSystem;
 
 public class AttackArea : MonoBehaviour
 {
+    private PlayerController player;
+    private AttackAreaList attackAreaList;
+
     private static AttackArea StaticInstance = null;
     public static AttackArea GetStatic()
     {
@@ -16,11 +19,19 @@ public class AttackArea : MonoBehaviour
     {
         StaticInstance = this;
     }
-    public void OnAttack()
+    void Start()
     {
-        foreach (var enemy in AttackAreaList.GetStatic().enemiesInRange)
+        player = PlayerController.GetStatic();
+        attackAreaList = AttackAreaList.GetStatic();
+        gameObject.SetActive(false);
+    }
+    public void OnAttack(float damage, float pushForce)
+    {
+        foreach (var enemy in attackAreaList.enemiesInRange)
         {
-            enemy.OnHit(PlayerController.GetStatic().playerDamage);
+            enemy.isHasHit = true;
+            
+            enemy.OnHit(damage, pushForce);
         }
     }
 }

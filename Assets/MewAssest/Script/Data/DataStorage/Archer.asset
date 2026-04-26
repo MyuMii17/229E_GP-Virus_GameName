@@ -22,7 +22,7 @@ MonoBehaviour:
   gravityScale: 2
   isCanDestroy: 1
   enemyType: 1
-  enemyHP: 1
+  enemyHP: 2
   damage: 1
   moveSpeed: 2
   pushAcceleration: 2

@@ -12,9 +12,11 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] private DataHolder dataHolder;
     [SerializeField]private Transform attackAreaPos;
-    [SerializeField]private GameObject attackArea;
+    [SerializeField]private GameObject attackAreaHit;
     [SerializeField]private GameObject slashVFX;
     [SerializeField]private Transform slashPos;
+    private AttackAreaList attackAreaList;
+    private AttackArea attackArea;
     private SpriteRenderer playerSprite;
     private InputAction dashAction;
     private InputAction attackAction;
@@ -29,7 +31,6 @@ public class PlayerController : MonoBehaviour
     private float playerDashCooldown;
     private float playerJumpForce;
     private float playerDashForce;
-    private float playerPushForce;
     private float playerGravityScale;
     private float playerLinearDamp;
     private float playerAngularDamp;
@@ -40,6 +41,7 @@ public class PlayerController : MonoBehaviour
     public Rigidbody2D rb;
     public float playerHP;
     public float playerDamage;
+    public float playerPushForce;
     public float playerAttackCooldown;
     public bool isDashing;
     public bool isDashCooldown;
@@ -75,9 +77,11 @@ public class PlayerController : MonoBehaviour
 
         dataHolder = GetComponent<DataHolder>();
         rb = GetComponent<Rigidbody2D>();
+
         attackAreaPos = transform.GetChild(0).transform;
-        attackArea = transform.GetChild(0).gameObject.transform.GetChild(0).gameObject;
+        attackAreaHit = transform.GetChild(0).gameObject.transform.GetChild(0).gameObject;
         playerSprite = GetComponent<SpriteRenderer>();
+
         moveAction = InputSystem.actions.FindAction("Move");
         attackAction = InputSystem.actions.FindAction("Attack");
         dashAction = InputSystem.actions.FindAction("Dash");
@@ -115,6 +119,12 @@ public class PlayerController : MonoBehaviour
         }
 
     }
+    void Start()
+    {
+        attackAreaList = AttackAreaList.GetStatic();
+        attackArea = AttackArea.GetStatic();
+    }
+
     void Update()
     {
         horizontalInput = moveAction.ReadValue<Vector2>().x;
@@ -143,7 +153,8 @@ public class PlayerController : MonoBehaviour
         if(attackAction.WasPressedThisFrame() && isAttacking != true && isHasHit == false)
         {
             var slashVfxSpawn = Instantiate(slashVFX,slashPos.position,Quaternion.identity);
-            Destroy(slashVfxSpawn, 0.2f);
+            Destroy(slashVfxSpawn, playerAttackCooldown);
+
             StartCoroutine(Attack());
         }
     }
@@ -186,10 +197,10 @@ public class PlayerController : MonoBehaviour
     IEnumerator Attack()
     {
         isAttacking = true;
-        attackArea.SetActive(true);
-        AttackArea.GetStatic().OnAttack();
+        attackAreaHit.SetActive(true);
+        attackArea.OnAttack(playerDamage, playerPushForce);
         yield return new WaitForSeconds(playerAttackCooldown);
-        attackArea.SetActive(false);
+        attackAreaHit.SetActive(false);
         isAttacking = false;
     }
     public IEnumerator HasHit()
@@ -216,7 +227,7 @@ public class PlayerController : MonoBehaviour
 
     public void OnHit(float damage, Vector2 dir, float pushForce)
     {
-        if(isImmune==true) return;
+        if(isImmune == true) return;
         
         rb.linearVelocity = Vector2.zero;
         rb.AddForce(-dir * pushForce , ForceMode2D.Impulse);
