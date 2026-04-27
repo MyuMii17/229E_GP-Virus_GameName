@@ -1,13 +1,16 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
     [SerializeField]private DataHolder dataHolder;
+    private HashSet<SpriteRenderer>enemySpriteRenderer = new HashSet<SpriteRenderer>();
     private FindPlayer findPlayer;
     private PlayerController playerController;
     private Rigidbody2D rb;
     private Coroutine attackCoroutine;
+    private Animator enemyAnimator;
     private float enemyMass;
     private float enemyLinerDamp;
     private float enemyAugularDamp;
@@ -30,6 +33,7 @@ public class EnemyController : MonoBehaviour
     {
         dataHolder = GetComponent<DataHolder>();
         rb = GetComponent<Rigidbody2D>();
+        enemyAnimator = GetComponent<Animator>();
         findPlayer = transform.GetChild(1).gameObject.GetComponent<FindPlayer>();
         if(dataHolder.baseData is EnemyData enemyData)
         {
@@ -60,6 +64,11 @@ public class EnemyController : MonoBehaviour
     void Start()
     {
         playerController = PlayerController.GetStatic();
+        for(int i = 2 ; i < 10; i++)
+        {
+            SpriteRenderer sprite = transform.GetChild(i).GetComponent<SpriteRenderer>();
+            enemySpriteRenderer.Add(sprite);
+        }
     }
 
     public IEnumerator OnHit(float damage, float pushForce)
@@ -107,6 +116,22 @@ public class EnemyController : MonoBehaviour
         var dir = transform.position - playerController.transform.position;
         dir.Normalize();
         rb.linearVelocity = new Vector2(-dir.x * enemyMoveSpeed, rb.linearVelocity.y);
+
+        if (dir.x >= 0)
+        {
+            foreach(var spriteRenderer in enemySpriteRenderer)
+            {
+                spriteRenderer.flipX = true;
+            }
+        }
+        else if (dir.x <= 0)
+        {
+            foreach(var spriteRenderer in enemySpriteRenderer)
+            {
+                spriteRenderer.flipX = false;
+            }
+        }
+
     }
     void Update()
     {
@@ -127,6 +152,14 @@ public class EnemyController : MonoBehaviour
                 StopCoroutine(attackCoroutine);
             }
             attackCoroutine = StartCoroutine(OnHit(playerController.playerDamage,playerController.playerPushForce));
+        }
+        if(rb.linearVelocity != Vector2.zero && isClash == false && isAttacked == false)
+        {
+            enemyAnimator.SetBool("isRunning",true);
+        }
+        else if(rb.linearVelocity == Vector2.zero)
+        {
+            enemyAnimator.SetBool("isRunning",false);
         }
     }
     void FixedUpdate()
