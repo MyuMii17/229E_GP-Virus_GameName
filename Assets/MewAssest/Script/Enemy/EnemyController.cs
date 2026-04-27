@@ -65,7 +65,18 @@ public class EnemyController : MonoBehaviour
     public IEnumerator OnHit(float damage, float pushForce)
     {
         isAttacked = true;
+
         enemyHP -= damage;
+
+        if(playerController.currentHealRequirment < playerController.playerHealRequirement)
+        {
+            playerController.currentHealRequirment++;
+        }
+        else if(playerController.currentHealRequirment > playerController.playerHealRequirement)
+        {
+            playerController.currentHealRequirment = playerController.playerHealRequirement;
+        }
+
         var dir = playerController.transform.position - transform.position ;
         dir.Normalize();
         rb.linearVelocity = Vector2.zero;

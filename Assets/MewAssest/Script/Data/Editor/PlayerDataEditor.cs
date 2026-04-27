@@ -13,6 +13,8 @@ public class PlayerDataEditor : Editor
     SerializedProperty jumpAcceleration;
     SerializedProperty attackCooldownTime;
     SerializedProperty dashCooldownTime;
+    SerializedProperty damageReduction;
+    SerializedProperty healRequirement;
 
     void OnEnable()
     {
@@ -25,6 +27,8 @@ public class PlayerDataEditor : Editor
         jumpAcceleration = serializedObject.FindProperty("jumpAcceleration");
         attackCooldownTime = serializedObject.FindProperty("attackCooldownTime");
         dashCooldownTime = serializedObject.FindProperty("dashCooldownTime");
+        damageReduction = serializedObject.FindProperty("damageReduction");
+        healRequirement = serializedObject.FindProperty("healRequirement");
     }
 
     public override void OnInspectorGUI()
@@ -34,7 +38,10 @@ public class PlayerDataEditor : Editor
         PlayerData data = (PlayerData)target;
 
         DrawPropertiesExcluding(serializedObject, 
-            "maxHP", "damage", "moveSpeed", "maxDashCount", "pushAcceleration", "dashAcceleration", "jumpAcceleration", "attackCooldownTime", "dashCooldownTime");
+            "maxHP", "damage", "moveSpeed", "maxDashCount", 
+            "pushAcceleration", "dashAcceleration", "jumpAcceleration", 
+            "attackCooldownTime", "dashCooldownTime", "damageReduction",
+            "healRequirement");
 
         EditorGUILayout.PropertyField(maxHP);
         EditorGUILayout.PropertyField(damage);
@@ -45,6 +52,8 @@ public class PlayerDataEditor : Editor
         EditorGUILayout.PropertyField(jumpAcceleration);
         EditorGUILayout.PropertyField(attackCooldownTime);
         EditorGUILayout.PropertyField(dashCooldownTime);
+        EditorGUILayout.PropertyField(damageReduction);
+        EditorGUILayout.PropertyField(healRequirement);
         
         if(GUILayout.Button("Rename Assest"))
         {

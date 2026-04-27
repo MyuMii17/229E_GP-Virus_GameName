@@ -4,7 +4,6 @@ using UnityEngine;
 public class FindPlayer : MonoBehaviour
 {
     public HashSet<PlayerController> playerInRange = new HashSet<PlayerController>();
-    private int findPlayerBoxIndex = 1;
 
     void OnTriggerStay2D(Collider2D collision)
     {

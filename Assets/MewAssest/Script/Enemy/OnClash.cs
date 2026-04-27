@@ -7,6 +7,7 @@ public class OnClash : MonoBehaviour
     [SerializeField]private PlayerController playerInRange;
     [SerializeField]private PlayerController playerHit;
     private PlayerController playerController;
+    private Coroutine onHitCoroutine;
     void Start()
     {
         playerController = PlayerController.GetStatic();
@@ -26,7 +27,12 @@ public class OnClash : MonoBehaviour
                 player.isHasHit = true;
                 player.rb.linearVelocity = Vector2.zero;
                 enemyController.ClashToPlayer(playerController.playerPushForce);
-                player.OnHit(enemyController.enemyDamage, dir, enemyController.enemyPushForce);
+                if(onHitCoroutine != null)
+                {
+                    StopCoroutine(onHitCoroutine);
+                }
+                onHitCoroutine = StartCoroutine(player.OnHit(enemyController.enemyDamage, dir, enemyController.enemyPushForce));
+                
             }
 
         }
@@ -37,10 +43,6 @@ public class OnClash : MonoBehaviour
         {
             playerInRange = null;
             playerHit = null;
-            if(player.isGameOverl == false && Time.timeScale != 0)
-            {
-                StartCoroutine(player.HasHit());
-            }
         }
     }
 
