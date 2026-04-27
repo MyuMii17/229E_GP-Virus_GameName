@@ -26,7 +26,7 @@ public class EnemyDataEditor : Editor
     public override void OnInspectorGUI()
     {
         serializedObject.Update();
-        
+
         EnemyData data = (EnemyData)target;
         
         DrawPropertiesExcluding(serializedObject, "arrowPrefeb");

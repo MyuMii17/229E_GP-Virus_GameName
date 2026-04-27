@@ -9,7 +9,6 @@ public class AttackArea : MonoBehaviour
 {
     private PlayerController player;
     private AttackAreaList attackAreaList;
-
     private static AttackArea StaticInstance = null;
     public static AttackArea GetStatic()
     {
@@ -25,13 +24,11 @@ public class AttackArea : MonoBehaviour
         attackAreaList = AttackAreaList.GetStatic();
         gameObject.SetActive(false);
     }
-    public void OnAttack(float damage, float pushForce)
+    public void OnAttack()
     {
         foreach (var enemy in attackAreaList.enemiesInRange)
         {
             enemy.isHasHit = true;
-            
-            enemy.OnHit(damage, pushForce);
         }
     }
 }

@@ -6,6 +6,11 @@ public class OnClash : MonoBehaviour
     [SerializeField]private EnemyController enemyController;
     [SerializeField]private PlayerController playerInRange;
     [SerializeField]private PlayerController playerHit;
+    private PlayerController playerController;
+    void Start()
+    {
+        playerController = PlayerController.GetStatic();
+    }
 
     void OnTriggerStay2D(Collider2D collider)
     {
@@ -16,9 +21,11 @@ public class OnClash : MonoBehaviour
             dir.Normalize();
             if(playerHit != player)
             {
+                enemyController.isClash = true;
                 playerHit = player;
                 player.isHasHit = true;
                 player.rb.linearVelocity = Vector2.zero;
+                enemyController.ClashToPlayer(playerController.playerPushForce);
                 player.OnHit(enemyController.enemyDamage, dir, enemyController.enemyPushForce);
             }
 

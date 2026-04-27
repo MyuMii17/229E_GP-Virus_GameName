@@ -24,7 +24,7 @@ MonoBehaviour:
   enemyType: 0
   enemyHP: 4
   damage: 1
-  moveSpeed: 3
+  moveSpeed: 4
   pushAcceleration: 10
   attackCooldownTime: 2
   arrowPrefeb: {fileID: 0}

@@ -198,7 +198,7 @@ public class PlayerController : MonoBehaviour
     {
         isAttacking = true;
         attackAreaHit.SetActive(true);
-        attackArea.OnAttack(playerDamage, playerPushForce);
+        attackArea.OnAttack();
         yield return new WaitForSeconds(playerAttackCooldown);
         attackAreaHit.SetActive(false);
         isAttacking = false;
