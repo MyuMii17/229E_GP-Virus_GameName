@@ -274,6 +274,7 @@ MonoBehaviour:
   spawnPoint: {fileID: 0}
   enemyPrefeb: {fileID: 1146774416290319599, guid: cf4f347231b41db499f0c8afd543dfdd, type: 3}
   enemyrset: {fileID: 0}
+  isHasEnemy: 0
 --- !u!4 &444006316
 Transform:
   m_ObjectHideFlags: 0
@@ -324,7 +325,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 6.4618526, y: 1.7595658}
+  m_Offset: {x: 8.428261, y: 1.7595658}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -334,7 +335,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 15.137198, y: 6.9461184}
+  m_Size: {x: 48.50995, y: 6.9461184}
   m_EdgeRadius: 0
 --- !u!1 &503813458
 GameObject:
