@@ -19,14 +19,14 @@ MonoBehaviour:
   mass: 1
   linearDamp: 1
   angularDamp: 0.05
-  gravityScale: 2
+  gravityScale: 3
   isCanDestroy: 1
   maxHP: 6
   damage: 1
   moveSpeed: 5
   pushAcceleration: 6
   dashAcceleration: 20
-  jumpAcceleration: 15
+  jumpAcceleration: 18
   attackCooldownTime: 0.5
   dashCooldownTime: 0.2
   damageReduction: 0.5

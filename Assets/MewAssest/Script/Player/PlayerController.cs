@@ -6,6 +6,7 @@ using NUnit.Framework;
 using TMPro;
 using Unity.Mathematics;
 using Unity.VisualScripting;
+using UnityEditor.Tilemaps;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering.Universal;
@@ -67,6 +68,7 @@ public class PlayerController : MonoBehaviour
     public bool isMoveing;
     public bool isJumpPressed;
     public bool isJumping;
+    public bool isGroundJumping;
     public bool isDashing;
     public bool isImmune;
     public bool isAttacking;
@@ -74,6 +76,7 @@ public class PlayerController : MonoBehaviour
     public bool isBlocking;
     public bool isHasHit;
     public bool isHitEnemy;
+    public bool isSlide;
     public bool isGrounded;
     public bool isWalled;
     public bool isLaddered;
@@ -216,7 +219,7 @@ public class PlayerController : MonoBehaviour
         }
 
 
-        if (dashAction.WasPressedThisFrame() && horizontalInput != 0 && isHasHit == false && isBlocking == false  && isHealing == false && isAttacking == false && isCanDash)
+        if (dashAction.WasPressedThisFrame() && horizontalInput != 0 && isHasHit == false && isBlocking == false  && isHealing == false && isAttacking == false && isSlide == false && isCanDash)
         {
             isCanMove = false;
             isCanDash = false;
@@ -224,14 +227,14 @@ public class PlayerController : MonoBehaviour
         }   
         
 
-        if(attackAction.WasPressedThisFrame() && isHasHit == false && isBlocking == false && isHealing == false && isDashing == false && isCanAttack)
+        if(attackAction.WasPressedThisFrame() && isHasHit == false && isBlocking == false && isHealing == false && isDashing == false && isSlide == false && isCanAttack)
         {
             isCanAttack = false;
             StartCoroutine(Attack());
         }
 
 
-        if (blockAction.IsPressed() && isAttacking == false && isHasHit == false && isHealing == false && isDashing == false && isJumping == false && isMoveing == false && isCanBlock)
+        if (blockAction.IsPressed() && isAttacking == false && isHasHit == false && isHealing == false && isDashing == false && isJumping == false && isMoveing == false && isSlide == false && isCanBlock)
         {
             isBlocking = true;
 
@@ -252,7 +255,7 @@ public class PlayerController : MonoBehaviour
         }
 
 
-        if (healAction.WasPressedThisFrame() && isBlocking == false && isAttacking == false && isHasHit == false && isDashing == false && isMoveing == false && isJumping == false && isCanHeal)
+        if (healAction.WasPressedThisFrame() && isBlocking == false && isAttacking == false && isHasHit == false && isDashing == false && isMoveing == false && isJumping == false && isSlide == false && isCanHeal)
         {
             isCanHeal = false;
 
@@ -290,7 +293,7 @@ public class PlayerController : MonoBehaviour
         }
 
 
-        if(isJumpPressed && isCanJump)
+        if(isJumpPressed && isJumping == false)
         {
             isCanJump = false;
             StartCoroutine(Jump());
@@ -301,12 +304,14 @@ public class PlayerController : MonoBehaviour
 
     IEnumerator Jump()
     {
+
         if(isCanJump == true) yield break;
 
         rb.linearVelocity = Vector2.zero;
 
         if(isGrounded)
         {
+            isGroundJumping = true;
             rb.AddForce(Vector2.up * playerJumpForce, ForceMode2D.Impulse);
         }
 
@@ -318,7 +323,29 @@ public class PlayerController : MonoBehaviour
 
         }
 
-        yield return new WaitForSeconds(0.5f);
+        if(isWalled && !isGrounded && horizontalInput != 0)
+        {
+            var sprite = transform.GetChild(1).GetComponent<SpriteRenderer>();
+            if(sprite.flipX == true && horizontalInput > 0)
+            {
+                rb.linearVelocity = new Vector2(horizontalInput * playerJumpForce , playerJumpForce);
+            }
+            if(sprite.flipX == false && horizontalInput < 0)
+            {
+                rb.linearVelocity = new Vector2(horizontalInput * playerJumpForce , playerJumpForce);
+            }
+
+        }
+        yield return new WaitForSeconds(0.3f);
+
+        if (isGroundJumping && isWalled)
+        {
+            isGroundJumping = false;
+            rb.linearVelocity = Vector2.zero;
+        }
+
+
+        yield return new WaitForSeconds(0.2f);
 
         isCanJump = true;
 
@@ -431,56 +458,81 @@ public class PlayerController : MonoBehaviour
 
         isHealing = false;
     }
-    void OnCollisionStay2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Ground"))
-        {    
-            isGrounded = true;
-        }
-    }
-    void OnCollisionExit2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Ground"))
-        {
-            isGrounded = false;
-        }
-    }
+    
 
     void OnTriggerStay2D(Collider2D collision)
     {
         if(collision.gameObject.layer == wallLayer)
         {
-            if (collision.CompareTag("Wall"))
+            if (collision.CompareTag("Wall") && isCanJump)
             {
                 isWalled = true;
+                isSlide = true;
+                isJumping = false;
             }
 
             if (collision.CompareTag("Ladder"))
             {
                 isLaddered = true;
+                isJumping = false; 
             }
+        }
+        if(collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
+        {
+            if (collision.gameObject.CompareTag("Ground"))
+            {    
+                isGrounded = true;
+                isWalled = false;
+                isCanMove = true;
+                isSlide = false;
 
-            if(isGrounded == false)
-            {
-                rb.gravityScale = 0.1f;
+                isJumping = false; 
             }
+        }
+
+        if(isWalled == true && !isGrounded)
+        {
+            isCanMove = false;
+            rb.gravityScale = 0.08f;
+        }
+        if(isLaddered == true && !isGrounded)
+        {
+            rb.gravityScale = 0.5f;
         }
     }
 
     void OnTriggerExit2D(Collider2D collision)
     {
+
         if(collision.gameObject.layer == wallLayer)
         {   
             if (collision.CompareTag("Wall"))
             {
                 isWalled = false;
+                isSlide = false;
+                isCanMove = true;
+                isJumping = true; 
+                
             }
 
             if (collision.CompareTag("Ladder"))
             {
                 isLaddered = false;
+                isJumping = true; 
+               
             }
-            rb.gravityScale = playerGravityScale;
         }
+
+
+        if(collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
+        {
+            if (collision.gameObject.CompareTag("Ground"))
+            {    
+                isGrounded = false;
+                isJumping = true; 
+    
+            }
+        }
+        rb.gravityScale = playerGravityScale;
     }
 }
