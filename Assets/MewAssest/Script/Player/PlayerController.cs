@@ -180,7 +180,7 @@ public class PlayerController : MonoBehaviour
         verticalInput = moveAction.ReadValue<Vector2>().y;
 
         // If Moveing Player Change =>  Idel to Walk, FlipX, Rotation AttaclArea
-        if(horizontalInput != 0 && isCanMove && isAttacking == false && isDashing == false && isHasHit == false && isHealing == false)
+        if(horizontalInput != 0 && isCanMove && isMoveing == false && isAttacking == false && isDashing == false && isHasHit == false && isHealing == false && isBlocking == false)
         {
             isMoveing = true;
             playerAnimator.SetBool("isWalk",true);
@@ -202,7 +202,7 @@ public class PlayerController : MonoBehaviour
                 attackAreaPos.transform.rotation = Quaternion.Euler(0, 0, 0);
             }
         }
-        else if(horizontalInput == 0 || isCanMove == false)
+        else if(horizontalInput == 0 || isCanMove == false || isMoveing == false)
         {
             isMoveing = false;
             playerAnimator.SetBool("isWalk",false);
@@ -234,9 +234,10 @@ public class PlayerController : MonoBehaviour
         }
 
 
-        if (blockAction.IsPressed() && isAttacking == false && isHasHit == false && isHealing == false && isDashing == false && isJumping == false && isMoveing == false && isSlide == false && isCanBlock)
+        if (blockAction.IsPressed() && isAttacking == false && isHasHit == false && isHealing == false && isDashing == false && isJumping == false && isSlide == false && isCanBlock)
         {
             isBlocking = true;
+            isMoveing = false;
 
             foreach(var playerSprite in playerRenderer)
             {
@@ -255,9 +256,10 @@ public class PlayerController : MonoBehaviour
         }
 
 
-        if (healAction.WasPressedThisFrame() && isBlocking == false && isAttacking == false && isHasHit == false && isDashing == false && isMoveing == false && isJumping == false && isSlide == false && isCanHeal)
+        if (healAction.WasPressedThisFrame() && isBlocking == false && isAttacking == false && isHasHit == false && isDashing == false && isJumping == false && isSlide == false && isCanHeal)
         {
             isCanHeal = false;
+            isMoveing = false;
 
             foreach(var playerSprite in playerRenderer)
             {
@@ -336,7 +338,7 @@ public class PlayerController : MonoBehaviour
             }
 
         }
-        yield return new WaitForSeconds(0.3f);
+        yield return new WaitForSeconds(0.2f);
 
         if (isGroundJumping && isWalled)
         {
@@ -345,8 +347,9 @@ public class PlayerController : MonoBehaviour
         }
 
 
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0.3f);
 
+        isGroundJumping = false;
         isCanJump = true;
 
     }
