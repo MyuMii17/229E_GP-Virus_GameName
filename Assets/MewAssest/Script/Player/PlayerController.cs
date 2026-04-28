@@ -68,6 +68,7 @@ public class PlayerController : MonoBehaviour
     public bool isBlockingVfxSpawn;
     public bool isCanHeal;
     public bool isHealing;
+    public int jumpCount;
 
     private static PlayerController StaticInstance = null;
     public static PlayerController GetStatic()
@@ -90,6 +91,7 @@ public class PlayerController : MonoBehaviour
         isDashing = false;
         isImmune = false;
         isHasHit = false;
+        jumpCount = 1;
 
         currentHealRequirment = 0;
 
@@ -252,7 +254,7 @@ public class PlayerController : MonoBehaviour
             rb.linearVelocity = new Vector2( horizontalInput * playerMoveSpeed, rb.linearVelocity.y);
         }
 
-        if(isJumpPressed == true && isHasHit == false && isBlocking == false)
+        if(isJumpPressed == true && isHasHit == false && isBlocking == false && isGrounded == true)
         {
             rb.AddForce(Vector2.up * playerJumpForce, ForceMode2D.Impulse);
             isJumpPressed = false;
@@ -344,7 +346,7 @@ public class PlayerController : MonoBehaviour
     {
         playerDashCount = playerMaxDashCount;
         if (collision.gameObject.CompareTag("Ground"))
-        {
+        {    
             isGrounded = true;
         }
 
