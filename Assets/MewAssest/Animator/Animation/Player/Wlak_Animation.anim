@@ -308,7 +308,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Solvers/New LimbSolver2D_L/New LimbSolver2D_L_Target
+    path: New LimbSolver2D_L/New LimbSolver2D_L_Target
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -360,7 +360,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Solvers/New LimbSolver2D_R/New LimbSolver2D_Target
+    path: New LimbSolver2D_R/New LimbSolver2D_R_Target
   m_ScaleCurves:
   - curve:
       serializedVersion: 2
@@ -510,7 +510,7 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     - serializedVersion: 2
-      path: 4094638309
+      path: 3006847898
       attribute: 1
       script: {fileID: 0}
       typeID: 4
@@ -519,7 +519,7 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     - serializedVersion: 2
-      path: 3173302614
+      path: 4205238427
       attribute: 1
       script: {fileID: 0}
       typeID: 4
@@ -1862,7 +1862,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.x
-    path: Solvers/New LimbSolver2D_L/New LimbSolver2D_L_Target
+    path: New LimbSolver2D_L/New LimbSolver2D_L_Target
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -1919,7 +1919,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.y
-    path: Solvers/New LimbSolver2D_L/New LimbSolver2D_L_Target
+    path: New LimbSolver2D_L/New LimbSolver2D_L_Target
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -1976,7 +1976,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.z
-    path: Solvers/New LimbSolver2D_L/New LimbSolver2D_L_Target
+    path: New LimbSolver2D_L/New LimbSolver2D_L_Target
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -2033,7 +2033,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.x
-    path: Solvers/New LimbSolver2D_R/New LimbSolver2D_Target
+    path: New LimbSolver2D_R/New LimbSolver2D_R_Target
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -2090,7 +2090,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.y
-    path: Solvers/New LimbSolver2D_R/New LimbSolver2D_Target
+    path: New LimbSolver2D_R/New LimbSolver2D_R_Target
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -2147,7 +2147,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.z
-    path: Solvers/New LimbSolver2D_R/New LimbSolver2D_Target
+    path: New LimbSolver2D_R/New LimbSolver2D_R_Target
     classID: 4
     script: {fileID: 0}
     flags: 0
