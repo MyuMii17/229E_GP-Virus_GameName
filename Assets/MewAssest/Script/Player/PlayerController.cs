@@ -213,7 +213,7 @@ public class PlayerController : MonoBehaviour
 
         if (healAction.WasPressedThisFrame() && isBlocking == false && isAttacking == false && isHasHit == false && isDashing == false )
         {
-            if(currentHealRequirment == playerHealRequirement)
+            if(currentHealRequirment >= playerHealRequirement)
             {
                 if(healCoroutine != null)
                 {

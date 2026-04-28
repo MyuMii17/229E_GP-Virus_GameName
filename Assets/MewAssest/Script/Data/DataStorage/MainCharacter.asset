@@ -28,7 +28,7 @@ MonoBehaviour:
   pushAcceleration: 6
   dashAcceleration: 12
   jumpAcceleration: 6
-  attackCooldownTime: 0.2
+  attackCooldownTime: 0.5
   dashCooldownTime: 0.2
   damageReduction: 0.5
   healRequirement: 3
