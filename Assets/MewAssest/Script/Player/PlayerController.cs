@@ -271,7 +271,7 @@ public class PlayerController : MonoBehaviour
         rb.gravityScale = 0;
         rb.linearVelocity = new Vector2(direction * playerDashForce, 0);
 
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0.4f);
 
         rb.gravityScale = playerGravityScale;
         playerAnimator.SetBool("isDash",false);
