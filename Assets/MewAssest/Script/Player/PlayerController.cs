@@ -1,7 +1,9 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.Data.Common;
 using JetBrains.Annotations;
 using NUnit.Framework;
+using TMPro;
 using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -13,10 +15,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private DataHolder dataHolder;
     [SerializeField]private Transform attackAreaPos;
     [SerializeField]private GameObject attackAreaHit;
-    [SerializeField]private GameObject slashVFX;
-    [SerializeField]private Transform slashPos;
-    [SerializeField]private GameObject blockVFX;
-    [SerializeField]private GameObject healVFX;
+    private Animator playerAnimator;
+    private HashSet<SpriteRenderer> playerRenderer = new HashSet<SpriteRenderer>();
     private AttackAreaList attackAreaList;
     private AttackArea attackArea;
     private SpriteRenderer playerSprite;
@@ -96,8 +96,6 @@ public class PlayerController : MonoBehaviour
 
         attackAreaPos = transform.GetChild(0).transform;
         attackAreaHit = transform.GetChild(0).gameObject.transform.GetChild(0).gameObject;
-        blockVFX = transform.GetChild(1).gameObject;
-        healVFX = transform.GetChild(2).gameObject;
         playerSprite = GetComponent<SpriteRenderer>();
 
         moveAction = InputSystem.actions.FindAction("Move");
@@ -146,23 +144,44 @@ public class PlayerController : MonoBehaviour
     {
         attackAreaList = AttackAreaList.GetStatic();
         attackArea = AttackArea.GetStatic();
+        playerAnimator = GetComponent<Animator>();
 
-        blockVFX.SetActive(false);
-        healVFX.SetActive(false);
+        for(int i = 1 ; i < 9; i++)
+        {
+            SpriteRenderer sprite = transform.GetChild(i).GetComponent<SpriteRenderer>();
+            playerRenderer.Add(sprite);
+        }
+
     }
 
     void Update()
     {
         horizontalInput = moveAction.ReadValue<Vector2>().x;
         verticalInput = moveAction.ReadValue<Vector2>().y;
+
+        if(horizontalInput != 0 && moveAction.WasPressedThisFrame())
+            {
+                playerAnimator.SetBool("isWalk",true);
+            }
+            else if(horizontalInput == 0 && !moveAction.WasPressedThisFrame())
+            {
+                playerAnimator.SetBool("isWalk",false);
+            }
+
         if (horizontalInput < 0 && isAttacking == false && isDashing == false && isHasHit == false && isBlocking == false) 
         { 
-            playerSprite.flipX = true;
+            foreach(var playerSprite in playerRenderer)
+            {
+                playerSprite.flipX = true;
+            }
             attackAreaPos.transform.rotation = Quaternion.Euler(0, 0, 180);
         }
         else if (horizontalInput > 0  && isAttacking == false && isDashing == false && isHasHit == false && isBlocking == false) 
         {
-            playerSprite.flipX = false;
+            foreach(var playerSprite in playerRenderer)
+            {
+                playerSprite.flipX = false;
+            }
             attackAreaPos.transform.rotation = Quaternion.Euler(0, 0, 0);
         }
 
@@ -173,30 +192,26 @@ public class PlayerController : MonoBehaviour
 
         if (dashAction.WasPressedThisFrame() && isHasHit == false && isDashing == false && isDashCooldown == false && horizontalInput != 0 && playerDashCount > 0 && isBlocking == false)
         {
-            
             StartCoroutine(Dash(horizontalInput));
         }   
 
         if(attackAction.WasPressedThisFrame() && isAttacking != true && isHasHit == false && isBlocking == false)
         {
-            slashVfxSpawn = Instantiate(slashVFX,slashPos.position,Quaternion.identity);
-            Destroy(slashVfxSpawn, playerAttackCooldown);
-
             StartCoroutine(Attack());
         }
 
         if (blockAction.IsPressed() && isAttacking != true && isHasHit == false)
         {
-            blockVFX.SetActive(true);
+            //blockAni
             isBlocking = true;
         }
         else
         {
-            blockVFX.SetActive(false);
+            //blockAni
             isBlocking = false;
         }
 
-        if (healAction.WasPressedThisFrame() && isBlocking == false)
+        if (healAction.WasPressedThisFrame() && isBlocking == false && isAttacking == false && isHasHit == false && isDashing == false )
         {
             if(currentHealRequirment == playerHealRequirement)
             {
@@ -226,6 +241,7 @@ public class PlayerController : MonoBehaviour
     }
     IEnumerator Dash(float dir)
     {
+        playerAnimator.SetBool("isDash",true);
         var direction = dir; 
         isDashing = true;
         isDashCooldown = true;
@@ -238,6 +254,7 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
 
         rb.gravityScale = playerGravityScale;
+        playerAnimator.SetBool("isDash",false);
         isDashing = false;
         isImmune = false;
 
@@ -246,16 +263,19 @@ public class PlayerController : MonoBehaviour
     }
     IEnumerator Attack()
     {
+        playerAnimator.SetBool("isAttack",true);
         isAttacking = true;
         attackAreaHit.SetActive(true);
         attackArea.OnAttack();
         yield return new WaitForSeconds(playerAttackCooldown);
+        playerAnimator.SetBool("isAttack",false);
         attackAreaHit.SetActive(false);
         isAttacking = false;
     }
     public IEnumerator OnHit(float damage, Vector2 dir, float pushForce)
     {
         if(isImmune == true) yield break;
+        playerAnimator.SetBool("isTakeDamage",true);
         if(isBlocking == true)
         {
             damage *= playerDamageReduction;
@@ -271,15 +291,16 @@ public class PlayerController : MonoBehaviour
             Time.timeScale = 0;
         }
         yield return new WaitForSeconds(0.4f);
+        playerAnimator.SetBool("isTakeDamage",false);
         isHasHit = false;
     }
     IEnumerator Heal()
     {
-        healVFX.SetActive(true);
+        playerAnimator.SetBool("isHeal",true);
         playerCurrentHP = playerMaxHP;
         currentHealRequirment = 0;
         yield return new WaitForSeconds(0.2f);
-        healVFX.SetActive(false);
+        playerAnimator.SetBool("isHeal",false);
     }
     void OnCollisionStay2D(Collision2D collision)
     {

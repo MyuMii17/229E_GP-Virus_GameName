@@ -11,6 +11,7 @@ public class OnClash : MonoBehaviour
     void Start()
     {
         playerController = PlayerController.GetStatic();
+        enemyController = transform.parent.GetComponent<EnemyController>();
     }
 
     void OnTriggerStay2D(Collider2D collider)
@@ -32,7 +33,6 @@ public class OnClash : MonoBehaviour
                     StopCoroutine(onHitCoroutine);
                 }
                 onHitCoroutine = StartCoroutine(player.OnHit(enemyController.enemyDamage, dir, enemyController.enemyPushForce));
-                
             }
 
         }

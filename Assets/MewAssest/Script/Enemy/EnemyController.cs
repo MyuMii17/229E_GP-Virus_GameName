@@ -74,6 +74,7 @@ public class EnemyController : MonoBehaviour
     public IEnumerator OnHit(float damage, float pushForce)
     {
         isAttacked = true;
+        enemyAnimator.SetBool("isTakeDamage",true);
 
         enemyHP -= damage;
 
@@ -94,7 +95,9 @@ public class EnemyController : MonoBehaviour
         {
             Destroy(gameObject, 0.1f);
         }
+
         yield return new WaitForSeconds(1f);
+        enemyAnimator.SetBool("isTakeDamage",false);
         isAttacked = false;
     }
     public void ClashToPlayer(float pushForce)
