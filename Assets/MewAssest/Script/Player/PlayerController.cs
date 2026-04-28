@@ -16,6 +16,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField]private Transform attackAreaPos;
     [SerializeField]private GameObject attackAreaHit;
     private Animator playerAnimator;
+    private HeartManager heartManager;
+    private HealBarManager healBarManager;
     private HashSet<SpriteRenderer> playerRenderer = new HashSet<SpriteRenderer>();
     private AttackAreaList attackAreaList;
     private AttackArea attackArea;
@@ -51,8 +53,8 @@ public class PlayerController : MonoBehaviour
     public float playerDamage;
     public float playerPushForce;
     public float playerAttackCooldown;
-    public int currentHealRequirment;
-    public int playerHealRequirement;
+    public float currentHealRequirment;
+    public float playerHealRequirement;
     public bool isDashing;
     public bool isDashCooldown;
     public bool isMove;
@@ -144,6 +146,8 @@ public class PlayerController : MonoBehaviour
     {
         attackAreaList = AttackAreaList.GetStatic();
         attackArea = AttackArea.GetStatic();
+        healBarManager = HealBarManager.GetStatic();
+        heartManager = HeartManager.GetStatic();
         playerAnimator = GetComponent<Animator>();
 
         for(int i = 1 ; i < 9; i++)
@@ -156,6 +160,7 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        healBarManager.SetHealReqBar(currentHealRequirment,playerHealRequirement);
         horizontalInput = moveAction.ReadValue<Vector2>().x;
         verticalInput = moveAction.ReadValue<Vector2>().y;
 
@@ -290,6 +295,7 @@ public class PlayerController : MonoBehaviour
         rb.linearVelocity = Vector2.zero;
         rb.AddForce(-dir * pushForce , ForceMode2D.Impulse);
         playerCurrentHP -= damage;
+        heartManager.OnDamageSetHeart(damage);
 
         if(playerCurrentHP <= 0)
         {
@@ -306,10 +312,21 @@ public class PlayerController : MonoBehaviour
     }
     IEnumerator Heal()
     {
+
+        foreach(var playerSprite in playerRenderer)
+        {
+            playerSprite.color = Color.green;
+        }
+
         playerAnimator.SetBool("isHeal",true);
         playerCurrentHP = playerMaxHP;
+        heartManager.OnHealSetHeart();
         currentHealRequirment = 0;
         yield return new WaitForSeconds(0.2f);
+        foreach(var playerSprite in playerRenderer)
+        {
+            playerSprite.color = Color.white;
+        }
         playerAnimator.SetBool("isHeal",false);
     }
     void OnCollisionStay2D(Collision2D collision)

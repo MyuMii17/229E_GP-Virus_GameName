@@ -15,7 +15,7 @@ public class PlayerData : BaseData
     [SerializeField] private float attackCooldownTime;
     [SerializeField] private float dashCooldownTime;
     [SerializeField] private float damageReduction;
-    [SerializeField] private int healRequirement;
+    [SerializeField] private float healRequirement;
 
     public float MaxHP => maxHP;
     public float Damage => damage;
@@ -27,5 +27,5 @@ public class PlayerData : BaseData
     public float AttackCooldownTime => attackCooldownTime;
     public float DashCooldownTime => dashCooldownTime;
     public float DamageReduction => damageReduction;
-    public int HealRequirement => healRequirement;
+    public float HealRequirement => healRequirement;
 }

@@ -11,6 +11,7 @@ public class EnemyController : MonoBehaviour
     private Rigidbody2D rb;
     private Coroutine attackCoroutine;
     private Animator enemyAnimator;
+    private HealBarManager healBarManager;
     private float enemyMass;
     private float enemyLinerDamp;
     private float enemyAugularDamp;
@@ -63,6 +64,7 @@ public class EnemyController : MonoBehaviour
 
     void Start()
     {
+        healBarManager = HealBarManager.GetStatic();
         playerController = PlayerController.GetStatic();
         for(int i = 2 ; i < 10; i++)
         {
