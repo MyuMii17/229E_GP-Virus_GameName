@@ -28,6 +28,6 @@ MonoBehaviour:
   dashAcceleration: 20
   jumpAcceleration: 18
   attackCooldownTime: 0.5
-  dashCooldownTime: 0.2
+  dashCooldownTime: 0.5
   damageReduction: 0.5
   healRequirement: 3

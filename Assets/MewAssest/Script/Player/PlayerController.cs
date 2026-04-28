@@ -362,6 +362,7 @@ public class PlayerController : MonoBehaviour
         
         isDashing = true;
         isImmune = true;
+        isMoveing = false;
 
         rb.gravityScale = 0;
         rb.linearVelocity = Vector2.zero;
