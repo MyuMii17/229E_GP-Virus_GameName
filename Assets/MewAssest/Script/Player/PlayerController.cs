@@ -207,12 +207,18 @@ public class PlayerController : MonoBehaviour
 
         if (blockAction.IsPressed() && isAttacking != true && isHasHit == false)
         {
-            //blockAni
+            foreach(var playerSprite in playerRenderer)
+            {
+                playerSprite.color = Color.yellow;
+            }
             isBlocking = true;
         }
         else
         {
-            //blockAni
+            foreach(var playerSprite in playerRenderer)
+            {
+                playerSprite.color = Color.white;
+            }
             isBlocking = false;
         }
 
