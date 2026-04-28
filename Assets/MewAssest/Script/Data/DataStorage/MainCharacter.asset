@@ -26,7 +26,7 @@ MonoBehaviour:
   moveSpeed: 5
   maxDashCount: 1
   pushAcceleration: 6
-  dashAcceleration: 12
+  dashAcceleration: 18
   jumpAcceleration: 6
   attackCooldownTime: 0.5
   dashCooldownTime: 0.2
