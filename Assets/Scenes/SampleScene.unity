@@ -1025,7 +1025,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &444006315
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1039,7 +1039,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpawnManager
   spawnPoint: {fileID: 0}
-  enemyPrefeb: {fileID: 1146774416290319599, guid: cf4f347231b41db499f0c8afd543dfdd, type: 3}
+  enemyPrefeb: {fileID: 357131521274369748, guid: 668fd710f40952e42abd71cc7d3bcf69, type: 3}
   enemyrset: {fileID: 0}
   isHasEnemy: 0
 --- !u!4 &444006316
@@ -3772,6 +3772,10 @@ PrefabInstance:
     - target: {fileID: 357131521274369748, guid: 668fd710f40952e42abd71cc7d3bcf69, type: 3}
       propertyPath: m_Name
       value: Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 357131521274369748, guid: 668fd710f40952e42abd71cc7d3bcf69, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1458270096277114551, guid: 668fd710f40952e42abd71cc7d3bcf69, type: 3}
       propertyPath: m_LocalPosition.x

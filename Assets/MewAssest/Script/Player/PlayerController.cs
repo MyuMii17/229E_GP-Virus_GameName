@@ -215,23 +215,32 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            foreach(var playerSprite in playerRenderer)
-            {
-                playerSprite.color = Color.white;
-            }
             isBlocking = false;
         }
 
         if (healAction.WasPressedThisFrame() && isBlocking == false && isAttacking == false && isHasHit == false && isDashing == false )
         {
-            if(currentHealRequirment >= playerHealRequirement)
+            if(currentHealRequirment >= playerHealRequirement && playerCurrentHP < playerMaxHP)
             {
+                foreach(var playerSprite in playerRenderer)
+                {
+                    playerSprite.color = Color.green;
+                }
+
                 if(healCoroutine != null)
                 {
                     StopCoroutine(healCoroutine);
                 }
                 healCoroutine = StartCoroutine(Heal());
             }
+        }
+        if(isBlocking == false && isDashing == false && isAttacking == false && isHasHit == false && isHealing == false)
+        {
+            foreach(var playerSprite in playerRenderer)
+            {
+                playerSprite.color = Color.white;
+            }
+
         }
     }
 
@@ -262,7 +271,7 @@ public class PlayerController : MonoBehaviour
         rb.gravityScale = 0;
         rb.linearVelocity = new Vector2(direction * playerDashForce, 0);
 
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.2f);
 
         rb.gravityScale = playerGravityScale;
         playerAnimator.SetBool("isDash",false);
@@ -318,21 +327,17 @@ public class PlayerController : MonoBehaviour
     }
     IEnumerator Heal()
     {
-
-        foreach(var playerSprite in playerRenderer)
-        {
-            playerSprite.color = Color.green;
-        }
-
+        isHealing = true;
         playerAnimator.SetBool("isHeal",true);
         playerCurrentHP = playerMaxHP;
         heartManager.OnHealSetHeart();
         currentHealRequirment = 0;
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0.5f);
         foreach(var playerSprite in playerRenderer)
         {
             playerSprite.color = Color.white;
         }
+        isHealing = false;
         playerAnimator.SetBool("isHeal",false);
     }
     void OnCollisionStay2D(Collision2D collision)
