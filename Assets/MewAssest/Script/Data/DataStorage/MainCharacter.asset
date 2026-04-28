@@ -25,7 +25,7 @@ MonoBehaviour:
   damage: 1
   moveSpeed: 5
   pushAcceleration: 6
-  dashAcceleration: 12
+  dashAcceleration: 20
   jumpAcceleration: 15
   attackCooldownTime: 0.5
   dashCooldownTime: 0.2

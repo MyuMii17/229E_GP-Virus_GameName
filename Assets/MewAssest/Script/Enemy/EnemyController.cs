@@ -75,8 +75,15 @@ public class EnemyController : MonoBehaviour
 
     public IEnumerator OnHit(float damage, float pushForce)
     {
-        isAttacked = true;
+
         enemyAnimator.SetBool("isTakeDamage",true);
+
+        isAttacked = true;
+
+        foreach(var enemy in enemySpriteRenderer)
+        {
+            enemy.color = Color.orange;
+        }
 
         enemyHP -= damage;
 
@@ -99,6 +106,12 @@ public class EnemyController : MonoBehaviour
         }
 
         yield return new WaitForSeconds(1f);
+
+        foreach(var enemy in enemySpriteRenderer)
+        {
+            enemy.color = Color.white;
+        }
+
         enemyAnimator.SetBool("isTakeDamage",false);
         isAttacked = false;
     }
