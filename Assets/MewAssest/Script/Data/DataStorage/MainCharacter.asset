@@ -21,7 +21,7 @@ MonoBehaviour:
   angularDamp: 0.05
   gravityScale: 2
   isCanDestroy: 1
-  maxHP: 5
+  maxHP: 6
   damage: 1
   moveSpeed: 5
   maxDashCount: 1
