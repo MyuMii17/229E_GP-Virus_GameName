@@ -8,7 +8,6 @@ public class PlayerData : BaseData
     [SerializeField] private float maxHP;
     [SerializeField] private float damage;
     [SerializeField] private float moveSpeed;
-    [SerializeField] private int maxDashCount;
     [SerializeField] private float pushAcceleration;
     [SerializeField] private float dashAcceleration;
     [SerializeField] private float jumpAcceleration;
@@ -20,7 +19,6 @@ public class PlayerData : BaseData
     public float MaxHP => maxHP;
     public float Damage => damage;
     public float MoveSpeed => moveSpeed;
-    public int MaxDashCount => maxDashCount;
     public float PushAcceleration => pushAcceleration;
     public float DashAcceleration => dashAcceleration;
     public float JumpAcceleration => jumpAcceleration;

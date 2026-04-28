@@ -24,10 +24,9 @@ MonoBehaviour:
   maxHP: 6
   damage: 1
   moveSpeed: 5
-  maxDashCount: 1
   pushAcceleration: 6
-  dashAcceleration: 18
-  jumpAcceleration: 6
+  dashAcceleration: 12
+  jumpAcceleration: 15
   attackCooldownTime: 0.5
   dashCooldownTime: 0.2
   damageReduction: 0.5

@@ -15,6 +15,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private DataHolder dataHolder;
     [SerializeField]private Transform attackAreaPos;
     [SerializeField]private GameObject attackAreaHit;
+    [SerializeField]private Transform wallCheck;
+    [SerializeField]private LayerMask wallLayer;
     private Animator playerAnimator;
     private HeartManager heartManager;
     private HealBarManager healBarManager;
@@ -31,15 +33,12 @@ public class PlayerController : MonoBehaviour
     private Coroutine healCoroutine;
     private float playerMoveSpeed;
     private float playerMass;
-    private float playerDashCount;
-    private float playerMaxDashCount;
-    private float playerDashAcceleration;
+    public float playerDashAcceleration;
     private float playerJumpAcceleration;
     private float playerPushAcceleration;
     private float playerDashCooldown;
     private float playerJumpForce;
     private float playerDashForce;
-    private float playerGravityScale;
     private float playerLinearDamp;
     private float playerAngularDamp;
     private float playerDamageReduction;
@@ -55,20 +54,30 @@ public class PlayerController : MonoBehaviour
     public float playerAttackCooldown;
     public float currentHealRequirment;
     public float playerHealRequirement;
-    public bool isDashing;
-    public bool isDashCooldown;
-    public bool isMove;
-    public bool isJumpPressed;
-    public bool isGrounded;
-    public bool isAttacking;
-    public bool isImmune;
-    public bool isHasHit;
-    public bool isGameOver;
-    public bool isBlocking;
-    public bool isBlockingVfxSpawn;
+    public float playerGravityScale;
+
+    [Header("What Player Can Do?")]
+    public bool isCanMove;
+    public bool isCanJump;
+    public bool isCanDash;
+    public bool isCanBlock;
+    public bool isCanAttack;
     public bool isCanHeal;
+
+    [Header("What Player Doing?")]
+    public bool isMoveing;
+    public bool isJumpPressed;
+    public bool isJumping;
+    public bool isDashing;
+    public bool isImmune;
+    public bool isAttacking;
     public bool isHealing;
-    public int jumpCount;
+    public bool isBlocking;
+    public bool isHasHit;
+    public bool isHitEnemy;
+    public bool isGrounded;
+    public bool isWalled;
+    public bool isGameOver;
 
     private static PlayerController StaticInstance = null;
     public static PlayerController GetStatic()
@@ -88,10 +97,11 @@ public class PlayerController : MonoBehaviour
 
         StaticInstance = this;
 
-        isDashing = false;
-        isImmune = false;
-        isHasHit = false;
-        jumpCount = 1;
+        isCanMove = true;
+        isCanAttack = true;
+        isCanBlock = true;
+        isCanDash = true;
+        isCanJump = true;
 
         currentHealRequirment = 0;
 
@@ -117,7 +127,6 @@ public class PlayerController : MonoBehaviour
             playerAngularDamp = dataHolder.baseData.AngularDamp;
             playerMoveSpeed = playerData.MoveSpeed;
             playerGravityScale = dataHolder.baseData.GravityScale;
-            playerMaxDashCount = playerData.MaxDashCount;
             playerDashCooldown = playerData.DashCooldownTime;
             playerAttackCooldown = playerData.AttackCooldownTime;
             playerDamage = playerData.Damage;
@@ -130,7 +139,6 @@ public class PlayerController : MonoBehaviour
             rb.linearDamping = playerLinearDamp;
             rb.angularDamping = playerAngularDamp;
             rb.gravityScale = playerGravityScale;
-            playerDashCount = playerMaxDashCount;
             playerCurrentHP = playerMaxHP;
 
             playerJumpForce = rb.mass * playerJumpAcceleration;
@@ -166,134 +174,220 @@ public class PlayerController : MonoBehaviour
         horizontalInput = moveAction.ReadValue<Vector2>().x;
         verticalInput = moveAction.ReadValue<Vector2>().y;
 
-        if(horizontalInput != 0 && moveAction.WasPressedThisFrame())
-            {
-                playerAnimator.SetBool("isWalk",true);
-            }
-            else if(horizontalInput == 0 && !moveAction.WasPressedThisFrame())
-            {
-                playerAnimator.SetBool("isWalk",false);
-            }
-
-        if (horizontalInput < 0 && isAttacking == false && isDashing == false && isHasHit == false && isBlocking == false) 
-        { 
-            foreach(var playerSprite in playerRenderer)
-            {
-                playerSprite.flipX = true;
-            }
-            attackAreaPos.transform.rotation = Quaternion.Euler(0, 0, 180);
-        }
-        else if (horizontalInput > 0  && isAttacking == false && isDashing == false && isHasHit == false && isBlocking == false) 
+        // If Moveing Player Change =>  Idel to Walk, FlipX, Rotation AttaclArea
+        if(horizontalInput != 0 && isCanMove)
         {
-            foreach(var playerSprite in playerRenderer)
-            {
-                playerSprite.flipX = false;
+            isMoveing = true;
+            playerAnimator.SetBool("isWalk",true);
+
+            if (horizontalInput < 0 && isAttacking == false && isDashing == false && isHasHit == false && isBlocking == false && isHealing == false) 
+            { 
+                foreach(var playerSprite in playerRenderer)
+                {
+                    playerSprite.flipX = true;
+                }
+                attackAreaPos.transform.rotation = Quaternion.Euler(0, 0, 180);
             }
-            attackAreaPos.transform.rotation = Quaternion.Euler(0, 0, 0);
+            else if (horizontalInput > 0  && isAttacking == false && isDashing == false && isHasHit == false && isBlocking == false && isHealing == false) 
+            {
+                foreach(var playerSprite in playerRenderer)
+                {
+                    playerSprite.flipX = false;
+                }
+                attackAreaPos.transform.rotation = Quaternion.Euler(0, 0, 0);
+            }
+        }
+        else if(horizontalInput == 0)
+        {
+            isMoveing = false;
+            playerAnimator.SetBool("isWalk",false);
         }
 
-        if(verticalInput > 0 && isDashing == false && isGrounded && isBlocking == false)
+        // If Jumping Player Change => isJumpPressed, 
+        if(verticalInput > 0 && isDashing == false && isBlocking == false && isHealing == false && isHasHit == false && isAttacking == false && isGrounded && isCanJump)
         {
             isJumpPressed = true;
         }
-
-        if (dashAction.WasPressedThisFrame() && isHasHit == false && isDashing == false && isDashCooldown == false && horizontalInput != 0 && playerDashCount > 0 && isBlocking == false)
+        else if(verticalInput > 0 && isDashing == false && isBlocking == false && isHealing == false && isHasHit == false && isAttacking == false && isWalled)
         {
+            isJumpPressed = true;
+        }
+        else if(verticalInput == 0)
+        {
+            isJumpPressed = false;
+        }
+
+
+        if (dashAction.WasPressedThisFrame() && horizontalInput != 0 && isHasHit == false && isBlocking == false  && isHealing == false && isAttacking == false && isCanDash)
+        {
+            isCanDash = false;
             StartCoroutine(Dash(horizontalInput));
         }   
+        
 
-        if(attackAction.WasPressedThisFrame() && isAttacking != true && isHasHit == false && isBlocking == false)
+        if(attackAction.WasPressedThisFrame() && isHasHit == false && isBlocking == false && isHealing == false && isDashing == false && isCanAttack)
         {
+            isCanAttack = false;
             StartCoroutine(Attack());
         }
 
-        if (blockAction.IsPressed() && isAttacking != true && isHasHit == false)
+
+        if (blockAction.IsPressed() && isAttacking == false && isHasHit == false && isHealing == false && isDashing == false && isJumping == false && isCanBlock)
         {
+            isBlocking = true;
+
             foreach(var playerSprite in playerRenderer)
             {
                 playerSprite.color = Color.yellow;
             }
-            isBlocking = true;
         }
         else
         {
             isBlocking = false;
         }
+        
 
-        if (healAction.WasPressedThisFrame() && isBlocking == false && isAttacking == false && isHasHit == false && isDashing == false )
+        if(currentHealRequirment >= playerHealRequirement && playerCurrentHP < playerMaxHP)
         {
-            if(currentHealRequirment >= playerHealRequirement && playerCurrentHP < playerMaxHP)
-            {
-                foreach(var playerSprite in playerRenderer)
-                {
-                    playerSprite.color = Color.green;
-                }
-
-                if(healCoroutine != null)
-                {
-                    StopCoroutine(healCoroutine);
-                }
-                healCoroutine = StartCoroutine(Heal());
-            }
+            isCanHeal = true;
         }
-        if(isBlocking == false && isDashing == false && isAttacking == false && isHasHit == false && isHealing == false)
+
+
+        if (healAction.WasPressedThisFrame() && isBlocking == false && isAttacking == false && isHasHit == false && isDashing == false && isMoveing == false && isJumping == false && isCanHeal)
+        {
+            isCanHeal = false;
+
+            foreach(var playerSprite in playerRenderer)
+            {
+                playerSprite.color = Color.green;
+            }
+
+            if(healCoroutine != null)
+            {
+                StopCoroutine(healCoroutine);
+            }
+
+            healCoroutine = StartCoroutine(Heal());
+
+        }
+
+
+        if(isBlocking == false && isHasHit == false && isHealing == false)
         {
             foreach(var playerSprite in playerRenderer)
             {
                 playerSprite.color = Color.white;
             }
-
         }
+
     }
 
     void FixedUpdate()
     {
 
-        if(horizontalInput != 0 && isDashing == false && isHasHit == false && isBlocking == false)
+        if(isMoveing)
         {
             rb.linearVelocity = new Vector2( horizontalInput * playerMoveSpeed, rb.linearVelocity.y);
         }
 
-        if(isJumpPressed == true && isHasHit == false && isBlocking == false && isGrounded == true)
+
+        if(isJumpPressed && isCanJump)
         {
-            rb.AddForce(Vector2.up * playerJumpForce, ForceMode2D.Impulse);
-            isJumpPressed = false;
+            isCanJump = false;
+            StartCoroutine(Jump());
         }
 
     }
+
+
+    IEnumerator Jump()
+    {
+        if(isCanJump == true) yield break;
+
+        rb.linearVelocity = Vector2.zero;
+
+        if(isGrounded)
+        {
+            if (isWalled)
+            {
+                rb.AddForce(Vector2.up * playerJumpForce, ForceMode2D.Impulse);
+            }
+            else
+            {
+                rb.AddForce(Vector2.up * playerJumpForce, ForceMode2D.Impulse);
+            }
+        }
+
+
+        if(isWalled && !isGrounded)
+        {
+
+            rb.linearVelocity = new Vector2(-horizontalInput * 10, playerJumpForce);
+
+        }
+
+        yield return new WaitForSeconds(0.5f);
+
+        isCanJump = true;
+
+    }
+
+
     IEnumerator Dash(float dir)
     {
+
+        if(isCanDash == true) yield break;
+        
         playerAnimator.SetBool("isDash",true);
-        var direction = dir; 
+        
+        isCanMove = false;
         isDashing = true;
-        isDashCooldown = true;
         isImmune = true;
-        playerDashCount--;
 
         rb.gravityScale = 0;
-        rb.linearVelocity = new Vector2(direction * playerDashForce, 0);
+        rb.linearVelocity = new Vector2(dir * playerDashForce, 0);
 
-        yield return new WaitForSeconds(0.4f);
+        yield return new WaitForSeconds(0.5f);
+
+        playerAnimator.SetBool("isDash",false);
 
         rb.gravityScale = playerGravityScale;
-        playerAnimator.SetBool("isDash",false);
+
         isDashing = false;
         isImmune = false;
 
+        isCanMove = true;
+
         yield return new WaitForSeconds(playerDashCooldown);
-        isDashCooldown = false;
+
+        isCanDash = true;
+        
     }
+
+    
     IEnumerator Attack()
     {
+
+        if(isCanAttack == true) yield break;
+
         playerAnimator.SetBool("isAttack",true);
+
         isAttacking = true;
         attackAreaHit.SetActive(true);
+
         attackArea.OnAttack();
+
         yield return new WaitForSeconds(playerAttackCooldown);
+
         playerAnimator.SetBool("isAttack",false);
+
         attackAreaHit.SetActive(false);
         isAttacking = false;
+        isCanAttack = true;
+
     }
+
+
     public IEnumerator OnHit(float damage, Vector2 dir, float pushForce)
     {
         if(isImmune == true) yield break;
@@ -325,6 +419,7 @@ public class PlayerController : MonoBehaviour
             playerSprite.color = Color.white;
         }
         playerAnimator.SetBool("isTakeDamage",false);
+
         isHasHit = false;
     }
     IEnumerator Heal()
@@ -335,19 +430,23 @@ public class PlayerController : MonoBehaviour
         heartManager.OnHealSetHeart();
         currentHealRequirment = 0;
         yield return new WaitForSeconds(0.5f);
-        foreach(var playerSprite in playerRenderer)
-        {
-            playerSprite.color = Color.white;
-        }
+
         isHealing = false;
         playerAnimator.SetBool("isHeal",false);
+
+        isCanHeal = true;
     }
     void OnCollisionStay2D(Collision2D collision)
     {
-        playerDashCount = playerMaxDashCount;
         if (collision.gameObject.CompareTag("Ground"))
         {    
             isGrounded = true;
+            isCanMove = true;
+        }
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Wall") && isGrounded == false)
+        {
+            isCanMove = false;
+            isWalled = true;
         }
 
     }
@@ -356,6 +455,12 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             isGrounded = false;
+        }
+
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Wall"))
+        {
+            isCanMove = true;
+            isWalled = false;
         }
     }
 
