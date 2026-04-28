@@ -25,7 +25,7 @@ public class PlayerController : MonoBehaviour
     private InputAction moveAction;
     private InputAction blockAction;
     private InputAction healAction;
-    private GameObject slashVfxSpawn;
+
     private Coroutine healCoroutine;
     private float playerMoveSpeed;
     private float playerMass;
@@ -276,6 +276,12 @@ public class PlayerController : MonoBehaviour
     {
         if(isImmune == true) yield break;
         playerAnimator.SetBool("isTakeDamage",true);
+
+        foreach(var playerSprite in playerRenderer)
+        {
+            playerSprite.color = Color.red;
+        }
+
         if(isBlocking == true)
         {
             damage *= playerDamageReduction;
@@ -291,6 +297,10 @@ public class PlayerController : MonoBehaviour
             Time.timeScale = 0;
         }
         yield return new WaitForSeconds(0.4f);
+        foreach(var playerSprite in playerRenderer)
+        {
+            playerSprite.color = Color.white;
+        }
         playerAnimator.SetBool("isTakeDamage",false);
         isHasHit = false;
     }
