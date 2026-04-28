@@ -15,8 +15,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private DataHolder dataHolder;
     [SerializeField]private Transform attackAreaPos;
     [SerializeField]private GameObject attackAreaHit;
-    [SerializeField]private Transform wallCheck;
-    [SerializeField]private LayerMask wallLayer;
+    private LayerMask wallLayer;
     private Animator playerAnimator;
     private HeartManager heartManager;
     private HealBarManager healBarManager;
@@ -77,6 +76,7 @@ public class PlayerController : MonoBehaviour
     public bool isHitEnemy;
     public bool isGrounded;
     public bool isWalled;
+    public bool isLaddered;
     public bool isGameOver;
 
     private static PlayerController StaticInstance = null;
@@ -107,6 +107,8 @@ public class PlayerController : MonoBehaviour
 
         dataHolder = GetComponent<DataHolder>();
         rb = GetComponent<Rigidbody2D>();
+
+        wallLayer = LayerMask.NameToLayer("Wall");
 
         attackAreaPos = transform.GetChild(0).transform;
         attackAreaHit = transform.GetChild(0).gameObject.transform.GetChild(0).gameObject;
@@ -204,11 +206,7 @@ public class PlayerController : MonoBehaviour
         }
 
         // If Jumping Player Change => isJumpPressed, 
-        if(verticalInput > 0 && isDashing == false && isBlocking == false && isHealing == false && isHasHit == false && isAttacking == false && isGrounded && isCanJump)
-        {
-            isJumpPressed = true;
-        }
-        else if(verticalInput > 0 && isDashing == false && isBlocking == false && isHealing == false && isHasHit == false && isAttacking == false && isWalled)
+        if(verticalInput > 0 && isDashing == false && isBlocking == false && isHealing == false && isHasHit == false && isAttacking == false && isCanJump)
         {
             isJumpPressed = true;
         }
@@ -309,21 +307,14 @@ public class PlayerController : MonoBehaviour
 
         if(isGrounded)
         {
-            if (isWalled)
-            {
-                rb.AddForce(Vector2.up * playerJumpForce, ForceMode2D.Impulse);
-            }
-            else
-            {
-                rb.AddForce(Vector2.up * playerJumpForce, ForceMode2D.Impulse);
-            }
+            rb.AddForce(Vector2.up * playerJumpForce, ForceMode2D.Impulse);
         }
 
 
-        if(isWalled && !isGrounded)
+        if(isLaddered && !isGrounded)
         {
 
-            rb.linearVelocity = new Vector2(-horizontalInput * 10, playerJumpForce);
+            rb.linearVelocity = new Vector2(rb.linearVelocityX, playerJumpForce * 0.5f);
 
         }
 
@@ -446,11 +437,6 @@ public class PlayerController : MonoBehaviour
         {    
             isGrounded = true;
         }
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Wall") && isGrounded == false)
-        {
-            isWalled = true;
-        }
-
     }
     void OnCollisionExit2D(Collision2D collision)
     {
@@ -458,11 +444,43 @@ public class PlayerController : MonoBehaviour
         {
             isGrounded = false;
         }
+    }
 
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Wall"))
+    void OnTriggerStay2D(Collider2D collision)
+    {
+        if(collision.gameObject.layer == wallLayer)
         {
-            isWalled = false;
+            if (collision.CompareTag("Wall"))
+            {
+                isWalled = true;
+            }
+
+            if (collision.CompareTag("Ladder"))
+            {
+                isLaddered = true;
+            }
+
+            if(isGrounded == false)
+            {
+                rb.gravityScale = 0.1f;
+            }
         }
     }
 
+    void OnTriggerExit2D(Collider2D collision)
+    {
+        if(collision.gameObject.layer == wallLayer)
+        {   
+            if (collision.CompareTag("Wall"))
+            {
+                isWalled = false;
+            }
+
+            if (collision.CompareTag("Ladder"))
+            {
+                isLaddered = false;
+            }
+            rb.gravityScale = playerGravityScale;
+        }
+    }
 }
