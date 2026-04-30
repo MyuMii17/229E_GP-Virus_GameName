@@ -11,9 +11,9 @@ public class UpgradeManager : MonoBehaviour
     public Button exitButtton;
     public GameObject upgradeUI;
     public TMP_Text moneyAmount;
-    private int costUp = 10;
-    private int currentDamageCost = 10;
-    private int currentSpeedCost = 10;
+    private int costUp = 2;
+    private int currentDamageCost = 30;
+    private int currentSpeedCost = 15;
     public bool isOpen;
     private PlayerController playerController;
     private PlayerUiController playerUiController;
@@ -54,7 +54,7 @@ public class UpgradeManager : MonoBehaviour
             playerController.playerMoney -= currentDamageCost;
             playerController.playerDamage++;
 
-            currentDamageCost += costUp;
+            currentDamageCost *= costUp;
             damageCost.text = $"${currentDamageCost}";
         }
     }
@@ -66,7 +66,7 @@ public class UpgradeManager : MonoBehaviour
             playerController.playerMoney -= currentSpeedCost;
             playerController.playerMoveSpeed++;
 
-            currentSpeedCost += costUp;
+            currentSpeedCost *= costUp;
             speedCost.text = $"${currentSpeedCost}";
         }
     }
