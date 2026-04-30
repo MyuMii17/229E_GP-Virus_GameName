@@ -9,6 +9,7 @@ TagManager:
   - Enemy
   - Wall
   - Ladder
+  - Coin
   layers:
   - Default
   - TransparentFX

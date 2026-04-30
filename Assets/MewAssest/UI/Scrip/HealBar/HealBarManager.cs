@@ -19,8 +19,6 @@ public class HealBarManager : MonoBehaviour
             return;
         }
 
-        DontDestroyOnLoad(transform.parent.gameObject);
-
         StaticInstance = this;
     }
 

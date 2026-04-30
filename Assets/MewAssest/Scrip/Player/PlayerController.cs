@@ -6,6 +6,7 @@ using NUnit.Framework;
 using TMPro;
 using Unity.Mathematics;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEditor.Tilemaps;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -20,7 +21,7 @@ public class PlayerController : MonoBehaviour
     private Animator playerAnimator;
     private HeartManager heartManager;
     private HealBarManager healBarManager;
-    private UpgradeManager upgradeManager;
+    private GameStateManger gameStateManger;
     private HashSet<SpriteRenderer> playerRenderer = new HashSet<SpriteRenderer>();
     private AttackAreaList attackAreaList;
     private AttackArea attackArea;
@@ -31,6 +32,8 @@ public class PlayerController : MonoBehaviour
     private InputAction blockAction;
     private InputAction healAction;
     private InputAction upgradeAction;
+    private InputAction menuAction;
+    
 
     private Coroutine healCoroutine;
     private float playerMass;
@@ -120,7 +123,6 @@ public class PlayerController : MonoBehaviour
         attackAreaHit = transform.GetChild(0).gameObject.transform.GetChild(0).gameObject;
         playerSprite = GetComponent<SpriteRenderer>();
 
-        upgradeAction = InputSystem.actions.FindAction("Upgrade");
         moveAction = InputSystem.actions.FindAction("Move");
         attackAction = InputSystem.actions.FindAction("Attack");
         dashAction = InputSystem.actions.FindAction("Dash");
@@ -167,8 +169,12 @@ public class PlayerController : MonoBehaviour
         attackArea = AttackArea.GetStatic();
         healBarManager = HealBarManager.GetStatic();
         heartManager = HeartManager.GetStatic();
-        upgradeManager = UpgradeManager.GetStatic();
+        gameStateManger = GameStateManger.GetStatic();
+
         playerAnimator = GetComponent<Animator>();
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
 
         for(int i = 1 ; i < 9; i++)
         {
@@ -289,12 +295,6 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        if (upgradeAction.WasPressedThisFrame())
-        {
-            upgradeManager.isOpen = true;
-            upgradeManager.upgradeUI.SetActive(true);
-            Time.timeScale = 0;
-        }
 
     }
 
@@ -448,7 +448,7 @@ public class PlayerController : MonoBehaviour
         if(playerCurrentHP <= 0)
         {
             isGameOver = true;
-            Time.timeScale = 0;
+            gameStateManger.GameOver();
         }
 
         yield return new WaitForSeconds(0.4f);

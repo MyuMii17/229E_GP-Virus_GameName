@@ -10,11 +10,14 @@ public class UpgradeManager : MonoBehaviour
     public Button SpeedUpgradButtton;
     public Button exitButtton;
     public GameObject upgradeUI;
+    public TMP_Text moneyAmount;
     private int costUp = 10;
     private int currentDamageCost = 10;
     private int currentSpeedCost = 10;
     public bool isOpen;
     private PlayerController playerController;
+    private PlayerUiController playerUiController;
+    private GameStateManger gameStateManger;
     private static UpgradeManager StaticInstance = null;
     public static UpgradeManager GetStatic()
     {
@@ -31,14 +34,14 @@ public class UpgradeManager : MonoBehaviour
     }
     void Update()
     {
-        if (isOpen)
-        {
-            playerController.enabled = false;
-        }
+        moneyAmount.text = $"${playerController.playerMoney}";
     }
     void Start()
     {
+        gameStateManger = GameStateManger.GetStatic();
         playerController = PlayerController.GetStatic();
+        playerUiController = PlayerUiController.GetStatic();
+
         upgradeUI.SetActive(false);
         
         damageCost.text = $"${currentDamageCost}";
@@ -46,28 +49,32 @@ public class UpgradeManager : MonoBehaviour
     }
     public void onDamageUp()
     {
-        playerController.playerMoney -= currentDamageCost;
-        playerController.playerDamage++;
+        if(playerController.playerMoney >= currentDamageCost)
+        {
+            playerController.playerMoney -= currentDamageCost;
+            playerController.playerDamage++;
 
-        currentDamageCost += costUp;
-        damageCost.text = $"${currentDamageCost}";
+            currentDamageCost += costUp;
+            damageCost.text = $"${currentDamageCost}";
+        }
     }
 
     public void onSpeedUp()
     {
-        playerController.playerMoney -= currentSpeedCost;
-        playerController.playerMoveSpeed++;
+        if(playerController.playerMoney >= currentSpeedCost)
+        {
+            playerController.playerMoney -= currentSpeedCost;
+            playerController.playerMoveSpeed++;
 
-        currentSpeedCost += costUp;
-        speedCost.text = $"${currentSpeedCost}";
+            currentSpeedCost += costUp;
+            speedCost.text = $"${currentSpeedCost}";
+        }
     }
 
     public void onExit()
     {
-        isOpen = false;
-        Time.timeScale = 1;
-        playerController.enabled = true;
-        upgradeUI.SetActive(false);
+        playerUiController.isUpgradeOpen = false;
+        gameStateManger.ResumeForGame(upgradeUI);
     }
 
 
