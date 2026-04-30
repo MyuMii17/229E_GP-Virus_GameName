@@ -146,6 +146,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyController
   dataHolder: {fileID: 0}
+  coins:
+  - {fileID: 8660252178053569121, guid: 82b1fec358ae1c34e8cd59ae831584e1, type: 3}
+  - {fileID: 8660252178053569121, guid: 82b1fec358ae1c34e8cd59ae831584e1, type: 3}
+  - {fileID: 8660252178053569121, guid: 82b1fec358ae1c34e8cd59ae831584e1, type: 3}
   enemyHP: 0
   enemyDamage: 0
   enemyPushForce: 0

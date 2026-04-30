@@ -20,6 +20,7 @@ public class PlayerController : MonoBehaviour
     private Animator playerAnimator;
     private HeartManager heartManager;
     private HealBarManager healBarManager;
+    private UpgradeManager upgradeManager;
     private HashSet<SpriteRenderer> playerRenderer = new HashSet<SpriteRenderer>();
     private AttackAreaList attackAreaList;
     private AttackArea attackArea;
@@ -29,9 +30,9 @@ public class PlayerController : MonoBehaviour
     private InputAction moveAction;
     private InputAction blockAction;
     private InputAction healAction;
+    private InputAction upgradeAction;
 
     private Coroutine healCoroutine;
-    private float playerMoveSpeed;
     private float playerMass;
     private float playerDashAcceleration;
     private float playerJumpAcceleration;
@@ -48,6 +49,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("Player Setting")]
     public Rigidbody2D rb;
+    public float playerMoveSpeed;
     public float playerCurrentHP;
     public float playerDamage;
     public float playerPushForce;
@@ -55,6 +57,7 @@ public class PlayerController : MonoBehaviour
     public float currentHealRequirment;
     public float playerHealRequirement;
     public float playerGravityScale;
+    public int playerMoney;
 
     [Header("What Player Can Do?")]
     public bool isCanMove;
@@ -117,6 +120,7 @@ public class PlayerController : MonoBehaviour
         attackAreaHit = transform.GetChild(0).gameObject.transform.GetChild(0).gameObject;
         playerSprite = GetComponent<SpriteRenderer>();
 
+        upgradeAction = InputSystem.actions.FindAction("Upgrade");
         moveAction = InputSystem.actions.FindAction("Move");
         attackAction = InputSystem.actions.FindAction("Attack");
         dashAction = InputSystem.actions.FindAction("Dash");
@@ -163,6 +167,7 @@ public class PlayerController : MonoBehaviour
         attackArea = AttackArea.GetStatic();
         healBarManager = HealBarManager.GetStatic();
         heartManager = HeartManager.GetStatic();
+        upgradeManager = UpgradeManager.GetStatic();
         playerAnimator = GetComponent<Animator>();
 
         for(int i = 1 ; i < 9; i++)
@@ -284,12 +289,19 @@ public class PlayerController : MonoBehaviour
             }
         }
 
+        if (upgradeAction.WasPressedThisFrame())
+        {
+            upgradeManager.isOpen = true;
+            upgradeManager.upgradeUI.SetActive(true);
+            Time.timeScale = 0;
+        }
+
     }
 
     void FixedUpdate()
     {
 
-        if(isMoveing)
+        if(isMoveing && isHasHit == false)
         {
             rb.linearVelocity = new Vector2( horizontalInput * playerMoveSpeed, rb.linearVelocity.y);
         }

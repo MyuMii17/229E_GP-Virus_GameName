@@ -6,6 +6,7 @@ public class EnemyController : MonoBehaviour
 {
     [SerializeField]private DataHolder dataHolder;
     private HashSet<SpriteRenderer>enemySpriteRenderer = new HashSet<SpriteRenderer>();
+    public List<GameObject> coins = new List<GameObject>();
     private FindPlayer findPlayer;
     private PlayerController playerController;
     private Rigidbody2D rb;
@@ -102,6 +103,10 @@ public class EnemyController : MonoBehaviour
         rb.AddForce(-dir * pushForce, ForceMode2D.Impulse);
         if(enemyHP <= 0)
         {
+            foreach(var coin in coins)
+            {
+                Instantiate(coin,transform.position,Quaternion.identity);
+            }
             Destroy(gameObject, 0.1f);
         }
 
