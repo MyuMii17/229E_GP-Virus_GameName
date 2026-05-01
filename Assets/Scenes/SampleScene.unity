@@ -727,6 +727,11 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 48.50995, y: 6.9461184}
   m_EdgeRadius: 0
+--- !u!223 &445183149 stripped
+Canvas:
+  m_CorrespondingSourceObject: {fileID: 7030603779638668725, guid: 47ea43ebab6024740814f045076eb6f0, type: 3}
+  m_PrefabInstance: {fileID: 8923813751744236377}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &482198073
 GameObject:
   m_ObjectHideFlags: 0
@@ -1415,6 +1420,17 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 4, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &1029203641 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4251447571700624638, guid: 47ea43ebab6024740814f045076eb6f0, type: 3}
+  m_PrefabInstance: {fileID: 8923813751744236377}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!1001 &1053307791
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1664,6 +1680,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+--- !u!1 &1197038998 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3218213408748955226, guid: 47ea43ebab6024740814f045076eb6f0, type: 3}
+  m_PrefabInstance: {fileID: 8923813751744236377}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1296139902
 GameObject:
   m_ObjectHideFlags: 0
@@ -2571,6 +2592,18 @@ PrefabInstance:
       propertyPath: healReqBar
       value: 
       objectReference: {fileID: 1181596173}
+    - target: {fileID: 8922593190379725496, guid: 32d9f8df9c224c3428691a98265a491d, type: 3}
+      propertyPath: mainCanvas
+      value: 
+      objectReference: {fileID: 445183149}
+    - target: {fileID: 8922593190379725496, guid: 32d9f8df9c224c3428691a98265a491d, type: 3}
+      propertyPath: endCreditUI
+      value: 
+      objectReference: {fileID: 1197038998}
+    - target: {fileID: 8922593190379725496, guid: 32d9f8df9c224c3428691a98265a491d, type: 3}
+      propertyPath: endCreditText
+      value: 
+      objectReference: {fileID: 1029203641}
     - target: {fileID: 9202336767024786516, guid: 32d9f8df9c224c3428691a98265a491d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 208.26797
