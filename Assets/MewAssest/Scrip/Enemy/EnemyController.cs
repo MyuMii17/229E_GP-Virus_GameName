@@ -10,6 +10,7 @@ public class EnemyController : MonoBehaviour
     private FindPlayer findPlayer;
     private PlayerController playerController;
     private Rigidbody2D rb;
+    private SoundManager soundManager;
     private Coroutine attackCoroutine;
     private Animator enemyAnimator;
     private HealBarManager healBarManager;
@@ -67,6 +68,8 @@ public class EnemyController : MonoBehaviour
     {
         healBarManager = HealBarManager.GetStatic();
         playerController = PlayerController.GetStatic();
+        soundManager = SoundManager.GetStatic();
+
         for(int i = 2 ; i < 10; i++)
         {
             SpriteRenderer sprite = transform.GetChild(i).GetComponent<SpriteRenderer>();
@@ -78,6 +81,7 @@ public class EnemyController : MonoBehaviour
     {
 
         enemyAnimator.SetBool("isTakeDamage",true);
+        soundManager.OnEnemyClankSound();
 
         isAttacked = true;
 
@@ -105,7 +109,9 @@ public class EnemyController : MonoBehaviour
         {
             foreach(var coin in coins)
             {
-                Instantiate(coin,transform.position,Quaternion.identity);
+                float rangeX = Random.Range(-2,2);
+                var spawnPositon = new Vector2(transform.position.x + rangeX, transform.position.y);
+                Instantiate(coin,spawnPositon,Quaternion.identity);
             }
             Destroy(gameObject, 0.1f);
         }

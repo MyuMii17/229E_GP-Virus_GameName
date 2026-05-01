@@ -22,6 +22,7 @@ public class PlayerController : MonoBehaviour
     private HeartManager heartManager;
     private HealBarManager healBarManager;
     private GameStateManger gameStateManger;
+    private SoundManager soundManager;
     private HashSet<SpriteRenderer> playerRenderer = new HashSet<SpriteRenderer>();
     private AttackAreaList attackAreaList;
     private AttackArea attackArea;
@@ -36,6 +37,7 @@ public class PlayerController : MonoBehaviour
     
 
     private Coroutine healCoroutine;
+    private Coroutine jumpCoroutine;
     private float playerMass;
     private float playerDashAcceleration;
     private float playerJumpAcceleration;
@@ -87,6 +89,7 @@ public class PlayerController : MonoBehaviour
     public bool isWalled;
     public bool isLaddered;
     public bool isGameOver;
+    public bool isJumpSoundPlay;
 
     private static PlayerController StaticInstance = null;
     public static PlayerController GetStatic()
@@ -170,6 +173,7 @@ public class PlayerController : MonoBehaviour
         healBarManager = HealBarManager.GetStatic();
         heartManager = HeartManager.GetStatic();
         gameStateManger = GameStateManger.GetStatic();
+        soundManager = SoundManager.GetStatic();
 
         playerAnimator = GetComponent<Animator>();
 
@@ -267,7 +271,7 @@ public class PlayerController : MonoBehaviour
         }
 
 
-        if (healAction.WasPressedThisFrame() && isBlocking == false && isAttacking == false && isHasHit == false && isDashing == false && isJumping == false && isSlide == false && isCanHeal)
+        if (healAction.WasReleasedThisFrame() && isBlocking == false && isAttacking == false && isHasHit == false && isDashing == false && isJumping == false && isSlide == false && isHealing == false && isCanHeal)
         {
             isCanHeal = false;
             isMoveing = false;
@@ -277,10 +281,7 @@ public class PlayerController : MonoBehaviour
                 playerSprite.color = Color.green;
             }
 
-            if(healCoroutine != null)
-            {
-                StopCoroutine(healCoroutine);
-            }
+            if(healCoroutine != null)return;
 
             healCoroutine = StartCoroutine(Heal());
 
@@ -307,10 +308,11 @@ public class PlayerController : MonoBehaviour
         }
 
 
-        if(isJumpPressed && isJumping == false)
+        if(isJumpPressed && isJumping == false && isCanJump == true)
         {
             isCanJump = false;
-            StartCoroutine(Jump());
+            if(jumpCoroutine != null) return;
+            jumpCoroutine = StartCoroutine(Jump());
         }
 
     }
@@ -318,13 +320,13 @@ public class PlayerController : MonoBehaviour
 
     IEnumerator Jump()
     {
-
         if(isCanJump == true) yield break;
 
         rb.linearVelocity = Vector2.zero;
 
         if(isGrounded)
         {
+            soundManager.OnJumpSound();
             isGroundJumping = true;
             rb.AddForce(Vector2.up * playerJumpForce, ForceMode2D.Impulse);
         }
@@ -339,6 +341,7 @@ public class PlayerController : MonoBehaviour
 
         if(isWalled && !isGrounded && horizontalInput != 0)
         {
+            soundManager.OnJumpSound();
             var sprite = transform.GetChild(1).GetComponent<SpriteRenderer>();
             if(sprite.flipX == true && horizontalInput > 0)
             {
@@ -363,6 +366,7 @@ public class PlayerController : MonoBehaviour
 
         isGroundJumping = false;
         isCanJump = true;
+        jumpCoroutine = null;
 
     }
 
@@ -374,6 +378,8 @@ public class PlayerController : MonoBehaviour
         if(isCanMove == true) yield break;
         
         playerAnimator.SetBool("isDash",true);
+
+        soundManager.OnDashSound();
         
         isDashing = true;
         isImmune = true;
@@ -407,6 +413,7 @@ public class PlayerController : MonoBehaviour
         if(isCanAttack == true) yield break;
 
         playerAnimator.SetBool("isAttack",true);
+        soundManager.OnPunchSound();
 
         isAttacking = true;
         attackAreaHit.SetActive(true);
@@ -429,6 +436,7 @@ public class PlayerController : MonoBehaviour
         if(isImmune == true) yield break;
 
         playerAnimator.SetBool("isTakeDamage",true);
+        soundManager.OnPlayerClankSound();
 
         foreach(var playerSprite in playerRenderer)
         {
@@ -461,6 +469,7 @@ public class PlayerController : MonoBehaviour
     {
         playerAnimator.SetBool("isHeal",true);
 
+        soundManager.OnHealSound();   
         isHealing = true;
 
         playerCurrentHP = playerMaxHP;
@@ -469,6 +478,8 @@ public class PlayerController : MonoBehaviour
         currentHealRequirment = 0;
 
         yield return new WaitForSeconds(0.5f);
+
+        healCoroutine = null;
 
         playerAnimator.SetBool("isHeal",false);
 

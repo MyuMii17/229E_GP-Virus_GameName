@@ -8,8 +8,11 @@ public class Coin : MonoBehaviour
     private float pushAccel = 6;
     private ConstantForce2D ct;
     private Rigidbody2D rb;
+    private SoundManager soundManager;
     public void Start()
     {
+        soundManager = SoundManager.GetStatic();
+
         ct = GetComponent<ConstantForce2D>();
         rb = GetComponent<Rigidbody2D>();
         pushForce = rb.mass * pushAccel;
@@ -24,6 +27,7 @@ public class Coin : MonoBehaviour
     {
         if (collision.TryGetComponent(out PlayerController player))
         {
+            soundManager.OnCollectSound();
             player.playerMoney += coin;
             Destroy(this.gameObject);
         }
