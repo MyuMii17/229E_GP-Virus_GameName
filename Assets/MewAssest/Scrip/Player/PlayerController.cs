@@ -7,7 +7,6 @@ using TMPro;
 using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEditor;
-using UnityEditor.Tilemaps;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering.Universal;
