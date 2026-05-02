@@ -1,15 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Data.Common;
-using JetBrains.Annotations;
-using NUnit.Framework;
-using TMPro;
-using Unity.Mathematics;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Rendering.Universal;
 
 public class PlayerController : MonoBehaviour
 {
