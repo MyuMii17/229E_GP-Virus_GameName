@@ -41,6 +41,7 @@ public class MenuManager : MonoBehaviour
     }
     public void Restart()
     {
-        SceneManager.LoadScene(0);
+        gameStateManger.ResumeForGame(MenuUI);
+        SceneManager.LoadScene(1);
     }
 }

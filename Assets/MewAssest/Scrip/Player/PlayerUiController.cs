@@ -26,7 +26,6 @@ public class PlayerUiController : MonoBehaviour
             return;
         }
 
-        DontDestroyOnLoad(gameObject);
 
         StaticInstance = this;
     }

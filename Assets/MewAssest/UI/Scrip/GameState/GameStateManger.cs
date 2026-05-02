@@ -75,8 +75,7 @@ public class GameStateManger : MonoBehaviour
 
     public void MainMenu()
     {
-        // SceneManager.LoadScene(0);
-        EditorApplication.isPlaying = false;
+        SceneManager.LoadScene(0);
         Time.timeScale = 1;
     }
 
@@ -88,6 +87,9 @@ public class GameStateManger : MonoBehaviour
     }
     void OnGetEnemy()
     {
-        key.SetActive(true);
+        if(playerController.isGetKey == false)
+        {
+            key.SetActive(true);
+        }
     }
 }

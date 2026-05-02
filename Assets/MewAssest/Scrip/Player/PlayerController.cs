@@ -19,6 +19,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField]private GameObject attackAreaHit;
     [SerializeField]private GameObject groundHide;
     [SerializeField]private GameObject doorOpen;
+    [SerializeField]private GameObject key;
     private LayerMask wallLayer;
     private Animator playerAnimator;
     private HeartManager heartManager;
@@ -108,8 +109,6 @@ public class PlayerController : MonoBehaviour
             Destroy(this.gameObject);
             return;
         }
-
-        DontDestroyOnLoad(gameObject);
 
         StaticInstance = this;
 
@@ -529,6 +528,7 @@ public class PlayerController : MonoBehaviour
             if (collision.CompareTag("Key"))
             {
                 isGetKey = true;
+                Destroy(key);
             }
             if (collision.CompareTag("Door"))
             {
