@@ -34,6 +34,5 @@ public class SpawnManager : MonoBehaviour
     {
         Instantiate(enemyPrefeb,spawnPoint.position,Quaternion.identity);
         yield return new WaitForSeconds(1);
-        enemyCount = 0;
     }
 }

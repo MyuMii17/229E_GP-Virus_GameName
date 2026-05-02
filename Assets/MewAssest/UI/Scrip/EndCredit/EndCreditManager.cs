@@ -8,6 +8,19 @@ public class EndCreditManager : MonoBehaviour
     private GameStateManger gameStateManger;
     public TMP_Text endCreditText;
     public bool isGameEnd;
+    private static EndCreditManager StaticInstance = null;
+    public static EndCreditManager GetStatic()
+    {
+        return StaticInstance;
+    }
+    void Awake()
+    {
+        if(StaticInstance != null)
+        {
+            Destroy(this.gameObject);
+        }
+        StaticInstance = this;
+    }
     void Start()
     {
         gameStateManger = GameStateManger.GetStatic();

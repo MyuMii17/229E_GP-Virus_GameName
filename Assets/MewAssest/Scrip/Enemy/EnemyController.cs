@@ -22,6 +22,7 @@ public class EnemyController : MonoBehaviour
     private float enemyPushAcceleration;
     private float enemyAttackCooldownTime;
     private GameObject enemyArrowPrefeb;
+    private GameStateManger gameStateManger;
 
     [Header("Enemy Setting")]
     public float enemyHP;
@@ -69,6 +70,7 @@ public class EnemyController : MonoBehaviour
         healBarManager = HealBarManager.GetStatic();
         playerController = PlayerController.GetStatic();
         soundManager = SoundManager.GetStatic();
+        gameStateManger = GameStateManger.GetStatic();
 
         for(int i = 2 ; i < 10; i++)
         {
@@ -113,6 +115,7 @@ public class EnemyController : MonoBehaviour
                 var spawnPositon = new Vector2(transform.position.x + rangeX, transform.position.y);
                 Instantiate(coin,spawnPositon,Quaternion.identity);
             }
+            gameStateManger.currentEnemyDead++;
             Destroy(gameObject, 0.1f);
         }
 

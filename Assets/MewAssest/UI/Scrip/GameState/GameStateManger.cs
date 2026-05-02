@@ -6,6 +6,8 @@ using UnityEngine.SceneManagement;
 
 public class GameStateManger : MonoBehaviour
 {
+    public int currentEnemyDead;
+    public GameObject key;
     private static GameStateManger StaticInstance = null;
     public static GameStateManger GetStatic()
     {
@@ -22,12 +24,19 @@ public class GameStateManger : MonoBehaviour
             Destroy(this.gameObject);
         }
         StaticInstance = this;
+        currentEnemyDead = 0;
     }
 
     void Start()
     {
         playerController = PlayerController.GetStatic();
-
+    }    
+    void Update()
+    {
+        if(currentEnemyDead >= 5)
+        {
+            OnGetEnemy();
+        }
     }
 
     public void SetAllActiveUIoff()
@@ -76,5 +85,9 @@ public class GameStateManger : MonoBehaviour
         Time.timeScale = 0f;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+    }
+    void OnGetEnemy()
+    {
+        key.SetActive(true);
     }
 }

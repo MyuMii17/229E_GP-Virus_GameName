@@ -24,6 +24,7 @@ public class SoundManager : MonoBehaviour
         {
             Destroy(this.gameObject);
         }
+        
         StaticInstance = this;
 
         audioSource = GetComponent<AudioSource>();

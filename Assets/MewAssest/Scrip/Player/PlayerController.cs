@@ -17,12 +17,15 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private DataHolder dataHolder;
     [SerializeField]private Transform attackAreaPos;
     [SerializeField]private GameObject attackAreaHit;
+    [SerializeField]private GameObject groundHide;
+    [SerializeField]private GameObject doorOpen;
     private LayerMask wallLayer;
     private Animator playerAnimator;
     private HeartManager heartManager;
     private HealBarManager healBarManager;
     private GameStateManger gameStateManger;
     private SoundManager soundManager;
+    private EndCreditManager endCreditManager;
     private HashSet<SpriteRenderer> playerRenderer = new HashSet<SpriteRenderer>();
     private AttackAreaList attackAreaList;
     private AttackArea attackArea;
@@ -90,6 +93,7 @@ public class PlayerController : MonoBehaviour
     public bool isLaddered;
     public bool isGameOver;
     public bool isJumpSoundPlay;
+    public bool isGetKey;
 
     private static PlayerController StaticInstance = null;
     public static PlayerController GetStatic()
@@ -174,6 +178,7 @@ public class PlayerController : MonoBehaviour
         heartManager = HeartManager.GetStatic();
         gameStateManger = GameStateManger.GetStatic();
         soundManager = SoundManager.GetStatic();
+        endCreditManager = EndCreditManager.GetStatic();
 
         playerAnimator = GetComponent<Animator>();
 
@@ -294,6 +299,12 @@ public class PlayerController : MonoBehaviour
             {
                 playerSprite.color = Color.white;
             }
+        }
+
+        if(isGetKey == true)
+        {
+            doorOpen.SetActive(true);
+            groundHide.SetActive(false);
         }
 
 
@@ -513,7 +524,17 @@ public class PlayerController : MonoBehaviour
                 isCanMove = true;
                 isSlide = false;
 
-                isJumping = false; 
+                isJumping = false;
+            }
+            if (collision.CompareTag("Key"))
+            {
+                isGetKey = true;
+            }
+            if (collision.CompareTag("Door"))
+            {
+                endCreditManager.isGameEnd = true;
+                var player =gameObject.GetComponent<PlayerController>();
+                player.enabled = false;
             }
         }
 
